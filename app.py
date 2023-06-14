@@ -3,6 +3,7 @@ import os
 import openai
 from flask import Flask, render_template
 from dotenv import load_dotenv, find_dotenv
+from user_input import cv, job_title
 
 
 # Instantiating Flask class
@@ -29,11 +30,6 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
 @app.route('/')
 def home():
     # --------------- START TEMPORARY CODE SNIPPET --------------- #
-    # User inputs
-    cv = """PMP Certified project manager with 5 years experience in large scale construction projects"""
-    job_title = """Remote Tech Project Manager"""
-
-    # Prompt
     prompt = f"""Generate a one paragraph long cover letter based on
     the info delimited by double angle brackets. <<cv: {cv} | job title: {job_title}>>"""
     # --------------- END TEMPORARY CODE SNIPPET --------------- #
