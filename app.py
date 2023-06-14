@@ -1,10 +1,8 @@
 # Importing external dependencies
 import os
 import openai
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from dotenv import load_dotenv, find_dotenv
-from user_input import cv, job_title
-
 
 # Instantiating Flask class
 app = Flask(__name__)
@@ -27,16 +25,15 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
 
 
 # Defining the route for the homepage
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    # --------------- START TEMPORARY CODE SNIPPET --------------- #
-    prompt = f"""Generate a one paragraph long cover letter based on
-    the info delimited by double angle brackets. <<cv: {cv} | job title: {job_title}>>"""
-    # --------------- END TEMPORARY CODE SNIPPET --------------- #
-
-    # Getting the completion response
-    response = get_completion(prompt)
-
+    response = ""
+    if request.method == 'POST':
+        cv = request.form.get('cv')
+        job_title = request.form.get('job_title')
+        prompt = f"""Generate a one paragraph long cover letter based on
+        the info delimited by double angle brackets. <<cv: {cv} | job title: {job_title}>>"""
+        response = get_completion(prompt)
     return render_template('index.html', response=response)
 
 

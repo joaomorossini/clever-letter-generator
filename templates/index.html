@@ -6,6 +6,15 @@
 <body>
     <h1>AI COVER LETTER GENERATOR</h1>
     <div>
+        <form action="/" method="post">
+            <label for="cv">CV:</label><br>
+            <textarea id="cv" name="cv"></textarea><br>
+            <label for="job_title">Job Title:</label><br>
+            <input type="text" id="job_title" name="job_title"><br>
+            <input type="submit" value="Generate Cover Letter">
+        </form>
+    </div>
+    <div>
         <h2>Generated Cover Letter:</h2>
         <p>{{ response }}</p>
     </div>
