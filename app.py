@@ -3,6 +3,7 @@ import os
 import openai
 from flask import Flask, render_template, request
 from dotenv import load_dotenv, find_dotenv
+from prompt_template import prompt_template
 
 # Instantiating Flask class
 app = Flask(__name__)
@@ -35,8 +36,9 @@ def home():
         employer_name = request.form.get('employer_name')
         employer_description = request.form.get('employer_description')
         additional_instructions = request.form.get('additional_instructions')
-        prompt = f"""Generate a one paragraph long cover letter based on
-        the info delimited by double angle brackets. <<cv: {cv} | job title: {job_title} | job description: {job_description} | employer name: {employer_name} | employer description: {employer_description} | additional instructions: {additional_instructions}>>"""
+        prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
+                                        employer_name=employer_name, employer_description=employer_description,
+                                        additional_instructions=additional_instructions)
         response = get_completion(prompt)
     return render_template('index.html', response=response)
 
