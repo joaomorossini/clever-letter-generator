@@ -20,7 +20,6 @@ app = Flask(__name__)  # Instantiating Flask class
 root_folder = os.path.dirname(os.path.abspath(__file__))
 database_path = os.path.join(root_folder, 'instance', 'database.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{database_path}"  # Connecting app to the database
-# app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///instance/database.db"
 # REFACTOR: SECRET KEY SHOULDN'T BE VISIBLE IN A PRODUCTION ENVIRONMENT
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)  # Creating database
@@ -42,8 +41,6 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
-# REFACTOR: Should I name the db field only 'cv'? What are the best practices?
-#     cv = db.Column(db.String(5000), nullable=False)
 
 
 class SignupForm(FlaskForm):
@@ -52,9 +49,6 @@ class SignupForm(FlaskForm):
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Password"})
-
-    # cv = StringField(validators=[
-    #                          InputRequired(), Length(min=4, max=5000)], render_kw={"placeholder": "You cv goes here"})
 
     submit = SubmitField('Signup')
 
@@ -118,7 +112,6 @@ def dashboard():
 def generator():
     response = ""
     if request.method == 'POST':
-        # cv = request.form.get('cv')
         job_title = request.form.get('job_title')
         job_description = request.form.get('job_description')
         employer_name = request.form.get('employer_name')
