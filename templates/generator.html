@@ -9,7 +9,7 @@
     </div>
     <h1>AI COVER LETTER GENERATOR</h1>
     <div>
-        <form action="/" method="post">
+        <form action="{{ url_for('generator') }}" method="post">
             <label for="cv">CV:</label><br>
             <textarea id="cv" name="cv"></textarea><br>
             <label for="job_title">Job Title:</label><br>

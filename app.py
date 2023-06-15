@@ -112,12 +112,13 @@ def dashboard():
 def generator():
     response = ""
     if request.method == 'POST':
+        cv = request.form.get('cv')
         job_title = request.form.get('job_title')
         job_description = request.form.get('job_description')
         employer_name = request.form.get('employer_name')
         employer_description = request.form.get('employer_description')
         additional_instructions = request.form.get('additional_instructions')
-        prompt = prompt_template.format(job_title=job_title, job_description=job_description,
+        prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
                                         employer_name=employer_name, employer_description=employer_description,
                                         additional_instructions=additional_instructions)
         response = get_completion(prompt)
