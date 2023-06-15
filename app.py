@@ -6,6 +6,9 @@ from dotenv import load_dotenv, find_dotenv
 from flask import Flask, render_template, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length, ValidationError
 
 # Internal dependencies
 from prompt_template import prompt_template
@@ -19,12 +22,43 @@ app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)  # Creating database
 
 
-# Creating 'User' table in the database
+# ---------- CREATING CLASSES AND FORMS ---------- #
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
+# REFACTOR: Should I name the db field only 'cv'? What are the best practices?
     stored_cv = db.Column(db.String(5000), nullable=False)
+
+
+class RegisterForm(FlaskForm):
+    username = StringField(validators=[
+                           InputRequired(), Length(min=4, max=30)], render_kw={"placeholder": "Username"})
+
+    password = PasswordField(validators=[
+                             InputRequired(), Length(min=8, max=40)], render_kw={"placeholder": "Password"})
+
+    cv = StringField(validators=[
+                             InputRequired(), Length(min=20, max=5000)], render_kw={"placeholder": "You cv goes here"})
+
+    submit = SubmitField('Register')
+
+    def validate_username(self, username):
+        existing_user_username = User.query.filter_by(
+            username=username.data).first()
+        if existing_user_username:
+            raise ValidationError(
+                'That username already exists. Please choose a different one.')
+
+
+class LoginForm(FlaskForm):
+    username = StringField(validators=[
+                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+
+    password = PasswordField(validators=[
+                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+
+    submit = SubmitField('Login')
 
 
 # ---------- ROUTES ---------- #
