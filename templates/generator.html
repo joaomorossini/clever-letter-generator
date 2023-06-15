@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cover Letter Generator</title>
+</head>
+<body>
+    <div>
+        <a href="{{ url_for('dashboard')}}">My Dashboard</a>
+    </div>
+    <h1>AI COVER LETTER GENERATOR</h1>
+    <div>
+        <form action="/" method="post">
+            <label for="cv">CV:</label><br>
+            <textarea id="cv" name="cv"></textarea><br>
+            <label for="job_title">Job Title:</label><br>
+            <input type="text" id="job_title" name="job_title"><br>
+            <label for="job_description">Job Description:</label><br>
+            <textarea id="job_description" name="job_description"></textarea><br>
+            <label for="employer_name">Employer Name:</label><br>
+            <input type="text" id="employer_name" name="employer_name"><br>
+            <label for="employer_description">Employer Description:</label><br>
+            <textarea id="employer_description" name="employer_description"></textarea><br>
+            <label for="additional_instructions">Additional Instructions:</label><br>
+            <textarea id="additional_instructions" name="additional_instructions"></textarea><br>
+            <input type="submit" value="Generate Cover Letter">
+        </form>
+    </div>
+    <div>
+        <h2>Generated Cover Letter:</h2>
+        <p>{{ response }}</p>
+    </div>
+</body>
+</html>
