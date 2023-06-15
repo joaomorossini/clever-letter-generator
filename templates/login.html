@@ -9,7 +9,15 @@
 </head>
 <body>
     <h1>Login Page</h1>
-    <p>Don't have an account? </p>
-    <a href="{{ url_for('signup') }}">Sign Up!</a>
+
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        {{ form.username }}
+        {{ form.password }}
+        {{ form.submit }}
+    </form>
+
+    <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign Up!</a> </p>
+
 </body>
 </html>

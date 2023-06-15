@@ -9,6 +9,7 @@ from flask_login import UserMixin
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
+from flask_bcrypt import Bcrypt
 
 # Internal dependencies
 from prompt_template import prompt_template
@@ -16,10 +17,14 @@ from prompt_template import prompt_template
 
 # ---------- FLASK APP AND DATABASE ---------- #
 app = Flask(__name__)  # Instantiating Flask class
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # Connecting app to the database
+root_folder = os.path.dirname(os.path.abspath(__file__))
+database_path = os.path.join(root_folder, 'instance', 'database.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{database_path}"  # Connecting app to the database
+# app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///instance/database.db"
 # REFACTOR: SECRET KEY SHOULDN'T BE VISIBLE IN A PRODUCTION ENVIRONMENT
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)  # Creating database
+bcrypt = Bcrypt(app)
 
 
 # ---------- CREATING CLASSES AND FORMS ---------- #
@@ -28,20 +33,20 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
 # REFACTOR: Should I name the db field only 'cv'? What are the best practices?
-    stored_cv = db.Column(db.String(5000), nullable=False)
+#     cv = db.Column(db.String(5000), nullable=False)
 
 
-class RegisterForm(FlaskForm):
+class SignupForm(FlaskForm):
     username = StringField(validators=[
                            InputRequired(), Length(min=4, max=30)], render_kw={"placeholder": "Username"})
 
     password = PasswordField(validators=[
-                             InputRequired(), Length(min=8, max=40)], render_kw={"placeholder": "Password"})
+                             InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Password"})
 
-    cv = StringField(validators=[
-                             InputRequired(), Length(min=20, max=5000)], render_kw={"placeholder": "You cv goes here"})
+    # cv = StringField(validators=[
+    #                          InputRequired(), Length(min=4, max=5000)], render_kw={"placeholder": "You cv goes here"})
 
-    submit = SubmitField('Register')
+    submit = SubmitField('Signup')
 
     def validate_username(self, username):
         existing_user_username = User.query.filter_by(
@@ -70,12 +75,22 @@ def home():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    return render_template('signup.html')
+    form = SignupForm()
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        new_user = User(username=form.username.data, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+
+    return render_template('signup.html', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    form = LoginForm()
+    return render_template('login.html', form=form)
 
 
 @app.route('/dashboard', methods=['GET', 'POST'])
@@ -87,13 +102,13 @@ def dashboard():
 def generator():
     response = ""
     if request.method == 'POST':
-        cv = request.form.get('cv')
+        # cv = request.form.get('cv')
         job_title = request.form.get('job_title')
         job_description = request.form.get('job_description')
         employer_name = request.form.get('employer_name')
         employer_description = request.form.get('employer_description')
         additional_instructions = request.form.get('additional_instructions')
-        prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
+        prompt = prompt_template.format(job_title=job_title, job_description=job_description,
                                         employer_name=employer_name, employer_description=employer_description,
                                         additional_instructions=additional_instructions)
         response = get_completion(prompt)
