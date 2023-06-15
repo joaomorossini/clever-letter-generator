@@ -1,63 +1,33 @@
+# ---------- DEPENDENCIES ---------- #
 # External dependencies
 import os
 import openai
 from dotenv import load_dotenv, find_dotenv
-from flask import Flask, render_template, request
-from flask import Flask, render_template, url_for, redirect
-# from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-# from flask_wtf import FlaskForm
-# from flask_bcrypt import Bcrypt
-# from wtforms import StringField, PasswordField, SubmitField
-# from wtforms.validators import InputRequired, Length, ValidationError
+from flask import Flask, render_template, request, url_for, redirect
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 
 # Internal dependencies
 from prompt_template import prompt_template
 
 
+# ---------- FLASK APP AND DATABASE ---------- #
 app = Flask(__name__)  # Instantiating Flask class
-# db = SQLAlchemy(app)  # Creating database
-# bcrypt = Bcrypt(app)  # ???
-#---------!VERIFICAR!----------#
-#PESQUISAR O QUE É SECRETKEY E COMO USAR ADEQUADAMENTE
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # Connecting app to the database
+# REFACTOR: SECRET KEY SHOULDN'T BE VISIBLE IN A PRODUCTION ENVIRONMENT
 app.config['SECRET_KEY'] = 'thisisasecretkey'
+db = SQLAlchemy(app)  # Creating database
 
 
-#----------------AUTHENTICATION - START----------------#
-# Initializing LoginManager
-# login_manager = LoginManager()
-# login_manager.init_app(app)
-# login_manager.login_view = 'login'
+# Creating 'User' table in the database
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), nullable=False, unique=True)
+    password = db.Column(db.String(80), nullable=False)
+    stored_cv = db.Column(db.String(5000), nullable=False)
 
 
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return User.query.get(int(user_id))
-#
-#
-# class User(db.model, UserMixin):
-#     id = db.Column(db.Integer, primary_key=True)
-
-#----------------AUTHENTICATION - END----------------#
-
-
-# Setting up environment
-_ = load_dotenv(find_dotenv())  # read local .env file
-openai.api_key = os.getenv('OPENAI_API_KEY')
-
-
-# Defining the helper function
-def get_completion(prompt, model="gpt-3.5-turbo"):
-    messages = [{"role": "user", "content": prompt}]
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=messages,
-        temperature=0,  # this is the degree of randomness of the model's output
-    )
-    return response.choices[0].message["content"]
-
-
+# ---------- ROUTES ---------- #
 # Defining routes
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -96,5 +66,39 @@ def generator():
     return render_template('generator.html', response=response)
 
 
-if __name__ == '__name__':
+# ---------- ENVIRONMENT VARIABLE API KEY ---------- #
+# Setting up environment
+_ = load_dotenv(find_dotenv())  # read local .env file
+openai.api_key = os.getenv('OPENAI_API_KEY')
+
+
+# ---------- GPT HELPER FUNCTION ---------- #
+# Defining the helper function
+def get_completion(prompt, model="gpt-3.5-turbo"):
+    messages = [{"role": "user", "content": prompt}]
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=messages,
+        temperature=0,  # this is the degree of randomness of the model's output
+    )
+    return response.choices[0].message["content"]
+
+
+with app.app_context():
+    try:
+        print("Creating tables...")
+        db.create_all()
+        print("Tables created.")
+    except Exception as e:
+        print("An error occurred while creating tables:", e)
+
+
+print("Current working directory:", os.getcwd())
+
+
+print("SQLALCHEMY_DATABASE_URI:", app.config['SQLALCHEMY_DATABASE_URI'])
+
+
+# ---------- END ---------- #
+if __name__ == '__main__':
     app.run(debug=True)
