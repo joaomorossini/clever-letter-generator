@@ -9,6 +9,8 @@
 </head>
 <body>
     <h1>My Dashboard</h1>
-    <a href="{{ url_for('generator') }}">Generate Cover Letters</a>
+    <h1>Welcome, {{ user.username }}!</h1>
+    <a href="{{ url_for('generator') }}">Generate Cover Letters | </a>
+    <a href="{{ url_for('logout') }}">Logout</a>
 </body>
 </html>
