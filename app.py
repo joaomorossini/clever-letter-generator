@@ -5,7 +5,7 @@ import openai
 import jwt
 from time import time
 from dotenv import load_dotenv, find_dotenv
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -64,8 +64,10 @@ If you did not make this request then simply ignore this email and no changes wi
 # ---------- CREATING CLASSES AND FORMS ---------- #
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(30), nullable=False, unique=True)
-    password = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(50), nullable=False, unique=True)
+    password = db.Column(db.String(100), nullable=False)
+    api_key = db.Column(db.String(200))
+    cv = db.Column(db.String(5000))
 
     def get_reset_token(self, expires_sec=1800):
         payload = {
@@ -87,7 +89,7 @@ class User(db.Model, UserMixin):
 
 class SignupForm(FlaskForm):
     email = StringField(validators=[
-                           InputRequired(), Email(), Length(min=4, max=30)], render_kw={"placeholder": "e-mail"})
+                           InputRequired(), Email(), Length(min=4, max=50)], render_kw={"placeholder": "e-mail"})
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Password"})
@@ -123,7 +125,6 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
 
-
 # ---------- ROUTES ---------- #
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -135,13 +136,13 @@ def signup():
     form = SignupForm()
 
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(email=form.email.data, password=hashed_password)
-        db.session.add(new_user)
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(email=form.email.data, password=hashed_password)
+        db.session.add(user)
         db.session.commit()
+        flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('login'))
-
-    return render_template('signup.html', form=form)
+    return render_template('signup.html', title='Register', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -164,15 +165,39 @@ def logout():
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
+    if request.method == 'POST':
+        # Handle API key form submission
+        new_api_key = request.form.get('api_key')
+        if new_api_key:
+            hashed_api_key = bcrypt.generate_password_hash(new_api_key)
+            current_user.api_key = hashed_api_key
+
+        # Handle CV form submission
+        new_cv = request.form.get('cv')
+        if new_cv:
+            current_user.cv = new_cv
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            # Log the error and show an error message to the user
+            print(e)
+            flash('An error occurred while updating your data. Please try again.', 'error')
+
     return render_template('dashboard.html', user=current_user)
 
 
 @app.route('/generator', methods=['GET', 'POST'])
 @login_required
 def generator():
+    # Check if the user's API key is set
+    if not current_user.api_key:
+        flash('Please set your API key before generating a cover letter.', 'error')
+        return redirect(url_for('dashboard'))
+
     response = ""
     if request.method == 'POST':
-        cv = request.form.get('cv')
+        cv = current_user.cv
         job_title = request.form.get('job_title')
         job_description = request.form.get('job_description')
         employer_name = request.form.get('employer_name')
@@ -232,7 +257,6 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
 
 with app.app_context():
     try:
-        print("Creating tables...")
         db.create_all()
         print("Tables created.")
     except Exception as e:
