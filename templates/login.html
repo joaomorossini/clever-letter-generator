@@ -12,12 +12,12 @@
 
     <form method="POST" action="">
         {{ form.hidden_tag() }}
-        {{ form.username }}
+        {{ form.email }}
         {{ form.password }}
         {{ form.submit }}
     </form>
 
     <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign Up!</a> </p>
-
+    <p>Forgot your password? <a href="{{ url_for('reset_request') }}">Click Here</a> </p>
 </body>
 </html>
