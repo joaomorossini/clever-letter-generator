@@ -98,6 +98,9 @@ class SignupForm(FlaskForm):
     password = PasswordField(validators=[
                              InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Password"})
 
+    api_key = StringField(validators=[
+                             Length(min=4, max=40)], render_kw={"placeholder": "Optional: Set up your OpenAI API Key. You can also do this later"})
+
     submit = SubmitField('Signup')
 
     def validate_email(self, email):
