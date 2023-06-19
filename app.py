@@ -14,6 +14,7 @@ from wtforms.validators import InputRequired, Length, ValidationError, Email, Eq
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
 
+
 # Internal dependencies
 from prompt_template import prompt_template
 
@@ -97,9 +98,6 @@ class SignupForm(FlaskForm):
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Password"})
-
-    api_key = StringField(validators=[
-                             Length(min=4, max=40)], render_kw={"placeholder": "Optional: Set up your OpenAI API Key. You can also do this later"})
 
     submit = SubmitField('Signup')
 

@@ -17,9 +17,11 @@
 
 <form method="POST">
     <label for="api_key">API Key:</label>
-    <input type="password" id="api_key" name="api_key" placeholder="{{
-            'API key already set up' if user.api_key else 'Your API key has not been set up yet' }}" value="{{
-            '*'*(len(user.api_key)-3) + user.api_key[-3:] if user.api_key else '' }}">
+    {% if user.api_key %}
+        <input type="password" id="api_key" name="api_key" value="{{ user.api_key[-3:] }}" readonly>
+    {% else %}
+        <input type="text" id="api_key" name="api_key" placeholder="Please set up your OpenAI API key">
+    {% endif %}
     <input type="submit" value="Update API Key">
 </form>
 
