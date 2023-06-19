@@ -18,16 +18,20 @@ from flask_mail import Mail, Message
 from prompt_template import prompt_template
 
 # ---------- FLASK APP AND DATABASE ---------- #
-app = Flask(__name__)  # Instantiating Flask class
+# Instantiating Flask class
+app = Flask(__name__)
 
+# Defining the path to the database
 root_folder = os.path.dirname(os.path.abspath(__file__))
 database_path = os.path.join(root_folder, 'instance', 'database.db')
 
+# Configuring the database
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{database_path}"  # Connecting app to the database
 # REFACTOR: SECRET KEY SHOULDN'T BE VISIBLE IN A PRODUCTION ENVIRONMENT
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)  # Creating database
 
+# Instantiating Bcrypt
 bcrypt = Bcrypt(app)
 
 # ---------- FLASK MAIL ---------- #
@@ -92,7 +96,7 @@ class SignupForm(FlaskForm):
                            InputRequired(), Email(), Length(min=4, max=50)], render_kw={"placeholder": "e-mail"})
 
     password = PasswordField(validators=[
-                             InputRequired(), Length(min=4, max=40)], render_kw={"placeholder": "Password"})
+                             InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Password"})
 
     submit = SubmitField('Signup')
 
@@ -106,10 +110,10 @@ class SignupForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "E-mail"})
+                           InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "E-mail"})
 
     password = PasswordField(validators=[
-                             InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
+                             InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Password"})
 
     submit = SubmitField('Login')
 

@@ -9,23 +9,25 @@
 </head>
 <body>
 
-    <a href="{{ url_for('generator') }}">Generate Cover Letters | </a>
-    <a href="{{ url_for('logout') }}">Logout</a>
+<a href="{{ url_for('generator') }}">Generate Cover Letters | </a>
+<a href="{{ url_for('logout') }}">Logout</a>
 
-    <h1>My Dashboard</h1>
-    <h3>You are logged in as {{ user.email }}</h3>
+<h1>My Dashboard</h1>
+<h3>You are logged in as {{ user.email }}</h3>
 
-    <form method="POST">
-        <label for="api_key">API Key:</label>
-        <input type="password" id="api_key" name="api_key" placeholder="{{ 'API key already set up' if user.api_key else 'Your API key has not been set up yet' }}">
-        <input type="submit" value="Update API Key">
-    </form>
+<form method="POST">
+    <label for="api_key">API Key:</label>
+    <input type="password" id="api_key" name="api_key" placeholder="{{
+            'API key already set up' if user.api_key else 'Your API key has not been set up yet' }}" value="{{
+            '*'*(len(user.api_key)-3) + user.api_key[-3:] if user.api_key else '' }}">
+    <input type="submit" value="Update API Key">
+</form>
 
-    <form method="POST">
-        <label for="cv">CV:</label>
-        <textarea id="cv" name="cv">{{ user.cv }}</textarea>
-        <input type="submit" value="Save CV">
-    </form>
+<form method="POST">
+    <label for="cv">CV:</label>
+    <textarea id="cv" name="cv">{{ user.cv }}</textarea>
+    <input type="submit" value="Save CV">
+</form>
 
 </body>
 </html>
