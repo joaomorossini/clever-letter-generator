@@ -72,7 +72,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(100), nullable=False)
     api_key = db.Column(db.String(200))
-    cv = db.Column(db.String(5000))
+    cv = db.Column(db.String(5000), default='')
 
     def get_reset_token(self, expires_sec=1800):
         payload = {
@@ -189,7 +189,10 @@ def dashboard():
             print(e)
             flash('An error occurred while updating your data. Please try again.', 'error')
 
-    return render_template('dashboard.html', user=current_user)
+    # If the user's CV is empty, show a placeholder
+    cv = current_user.cv if current_user.cv else "Your CV goes here"
+
+    return render_template('dashboard.html', user=current_user, cv=cv)
 
 
 @app.route('/generator', methods=['GET', 'POST'])

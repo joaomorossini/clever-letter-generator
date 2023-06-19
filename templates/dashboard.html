@@ -18,7 +18,7 @@
 <form method="POST">
     <label for="api_key">API Key:</label>
     {% if user.api_key %}
-        <input type="password" id="api_key" name="api_key" value="{{ user.api_key[-3:] }}" readonly>
+        <input type="password" id="api_key" name="api_key" value="{{ user.api_key }}" readonly>
     {% else %}
         <input type="text" id="api_key" name="api_key" placeholder="Please set up your OpenAI API key">
     {% endif %}
@@ -27,8 +27,12 @@
 
 <form method="POST">
     <label for="cv">CV:</label>
-    <textarea id="cv" name="cv">{{ user.cv }}</textarea>
-    <input type="submit" value="Save CV">
+    {% if user.cv %}
+        <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000">{{ user.cv }}</textarea>
+    {% else %}
+        <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000" placeholder="Your CV goes here"></textarea>
+    {% endif %}
+    <input type="submit" value="Update CV">
 </form>
 
 </body>
