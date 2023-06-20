@@ -211,6 +211,12 @@ def generator():
         return redirect(url_for('dashboard'))
 
     response = ""
+    job_title = ""
+    job_description = ""
+    employer_name = ""
+    employer_description = ""
+    additional_instructions = ""
+
     if request.method == 'POST':
         cv = current_user.cv
         job_title = request.form.get('job_title')
@@ -218,11 +224,29 @@ def generator():
         employer_name = request.form.get('employer_name')
         employer_description = request.form.get('employer_description')
         additional_instructions = request.form.get('additional_instructions')
+
+    if 'generate' in request.form:
         prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
                                         employer_name=employer_name, employer_description=employer_description,
                                         additional_instructions=additional_instructions)
-        response = get_completion(prompt)
-    return render_template('generator.html', response=response)
+        # response = get_completion(prompt)
+        response = "Teste Teste Teste Teste Teste "
+
+        # Create a log entry
+        log = Log(job_title=job_title, employer_name=employer_name, user_id=current_user.id)
+        db.session.add(log)
+        db.session.commit()
+
+    elif 'clear' in request.form:
+        job_title = ""
+        job_description = ""
+        employer_name = ""
+        employer_description = ""
+        additional_instructions = ""
+
+    return render_template('generator.html', response=response, job_title=job_title, job_description=job_description,
+                           employer_name=employer_name, employer_description=employer_description,
+                           additional_instructions=additional_instructions)
 
 
 @app.route('/reset_request', methods=['GET', 'POST'])
