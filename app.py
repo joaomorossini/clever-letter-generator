@@ -131,12 +131,12 @@ class ResetPasswordForm(FlaskForm):
 
 
 # ---------- ROUTES ---------- #
+# @app.route('/', methods=['GET', 'POST'])
+# def home():
+#     return render_template('login.html')
+
+
 @app.route('/', methods=['GET', 'POST'])
-def home():
-    return render_template('index.html')
-
-
-@app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
 
@@ -262,13 +262,19 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
     )
     return response.choices[0].message["content"]
 
-
+# Checking if database exists and creating a new one if it doesnt
 with app.app_context():
     try:
         db.create_all()
         print("Tables created.")
     except Exception as e:
         print("An error occurred while creating tables:", e)
+
+# TEMPORARY
+@app.after_request
+def add_header(response):
+    response.cache_control.no_store = True
+    return response
 
 
 # ---------- END ---------- #
