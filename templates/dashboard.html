@@ -1,39 +1,40 @@
 <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Dashboard</title>
-</head>
-<body>
+<html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <title>Dashboard</title>
+    </head>
+    <body>
 
-<a href="{{ url_for('generator') }}">Generate Cover Letters | </a>
-<a href="{{ url_for('logout') }}">Logout</a>
+        <a href="{{ url_for('generator') }}">Generate Cover Letters | </a>
+        <a href="{{ url_for('logout') }}">Logout</a>
 
-<h1>My Dashboard</h1>
-<h3>You are logged in as {{ user.email }}</h3>
+        <h1>My Dashboard</h1>
+        <h3>You are logged in as {{ user.email }}</h3>
 
-<form method="POST">
-    <label for="api_key">API Key:</label>
-    {% if user.api_key %}
-        <input type="password" id="api_key" name="api_key" value="{{ user.api_key }}" readonly>
-    {% else %}
-        <input type="text" id="api_key" name="api_key" placeholder="Please set up your OpenAI API key">
-    {% endif %}
-    <input type="submit" value="Update API Key">
-</form>
+        <form method="POST">
+            <label for="api_key">API Key:</label>
+            {% if user.api_key %}
+                <input type="password" id="api_key" name="api_key" value="{{ user.api_key }}" readonly>
+            {% else %}
+                <input type="text" id="api_key" name="api_key" placeholder="Please set up your OpenAI API key">
+            {% endif %}
+            <input type="submit" value="Update API Key">
+        </form>
 
-<form method="POST">
-    <label for="cv">CV:</label>
-    {% if user.cv %}
-        <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000">{{ user.cv }}</textarea>
-    {% else %}
-        <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000" placeholder="Your CV goes here"></textarea>
-    {% endif %}
-    <input type="submit" value="Update CV">
-</form>
-
-</body>
+        <form method="POST">
+            <label for="cv">CV:</label>
+            {% if user.cv %}
+                <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000">{{ user.cv }}</textarea>
+            {% else %}
+                <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000" placeholder="Your CV goes here"></textarea>
+            {% endif %}
+            <input type="submit" value="Update CV">
+        </form>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    </body>
 </html>

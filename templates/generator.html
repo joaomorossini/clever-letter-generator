@@ -1,31 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Cover Letter Generator</title>
-</head>
-<body>
-    <div>
-        <a href="{{ url_for('dashboard')}}">My Dashboard</a>
-    </div>
-    <h1>AI COVER LETTER GENERATOR</h1>
-    <div>
-        <form action="{{ url_for('generator') }}" method="post">
-            <label for="job_title">Job Title:</label><br>
-            <input type="text" id="job_title" name="job_title"><br>
-            <label for="job_description">Job Description:</label><br>
-            <textarea id="job_description" name="job_description"></textarea><br>
-            <label for="employer_name">Employer Name:</label><br>
-            <input type="text" id="employer_name" name="employer_name"><br>
-            <label for="employer_description">Employer Description:</label><br>
-            <textarea id="employer_description" name="employer_description"></textarea><br>
-            <label for="additional_instructions">Additional Instructions:</label><br>
-            <textarea id="additional_instructions" name="additional_instructions"></textarea><br>
-            <input type="submit" value="Generate Cover Letter">
-        </form>
-    </div>
-    <div>
-        <h2>Generated Cover Letter:</h2>
-        <p>{{ response }}</p>
-    </div>
-</body>
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <title>Cover Letter Generator</title>
+    </head>
+    <body>
+        <div>
+            <a href="{{ url_for('dashboard')}}">My Dashboard</a>
+        </div>
+        <h1>AI COVER LETTER GENERATOR</h1>
+        <div>
+            <form action="{{ url_for('generator') }}" method="post">
+                <label for="job_title">Job Title:</label><br>
+                <input type="text" id="job_title" name="job_title"><br>
+                <label for="job_description">Job Description:</label><br>
+                <textarea id="job_description" name="job_description"></textarea><br>
+                <label for="employer_name">Employer Name:</label><br>
+                <input type="text" id="employer_name" name="employer_name"><br>
+                <label for="employer_description">Employer Description:</label><br>
+                <textarea id="employer_description" name="employer_description"></textarea><br>
+                <label for="additional_instructions">Additional Instructions:</label><br>
+                <textarea id="additional_instructions" name="additional_instructions"></textarea><br>
+                <input type="submit" value="Generate Cover Letter">
+            </form>
+        </div>
+        <div>
+            <h2>Generated Cover Letter:</h2>
+            <p>{{ response }}</p>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    </body>
 </html>
