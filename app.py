@@ -4,6 +4,7 @@ import os
 import openai
 import jwt
 from time import time
+from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
 from flask import Flask, render_template, request, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -130,6 +131,18 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
 
+class Log(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    job_title = db.Column(db.String(100), nullable=False)
+    employer_name = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f"Log('{self.timestamp}', '{self.employer_name}', '{self.job_title}')"
+
+
+#---------- ROUTES ----------
 @app.route('/', methods=['GET', 'POST'])
 def home():
     form = SignupForm()
@@ -249,12 +262,13 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 # Defining the helper function
 def get_completion(prompt, model="gpt-3.5-turbo"):
     messages = [{"role": "user", "content": prompt}]
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=messages,
-        temperature=0,  # this is the degree of randomness of the model's output
-    )
-    return response.choices[0].message["content"]
+    # response = openai.ChatCompletion.create(
+    #     model=model,
+    #     messages=messages,
+    #     temperature=0,  # this is the degree of randomness of the model's output
+    # )
+    # return response.choices[0].message["content"]
+    return "Testando"
 
 # Checking if database exists and creating a new one if it doesnt
 with app.app_context():
