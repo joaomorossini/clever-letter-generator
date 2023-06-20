@@ -3,10 +3,11 @@
 import os
 import openai
 import jwt
+import io
 from time import time
 from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
-from flask import Flask, render_template, request, url_for, redirect, flash
+from flask import Flask, render_template, request, url_for, redirect, flash, send_file, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -173,33 +174,6 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
-
-@app.route('/dashboard', methods=['GET', 'POST'])
-# @login_required
-def dashboard():
-    if request.method == 'POST':
-        # Handle API key form submission
-        new_api_key = request.form.get('api_key')
-        if new_api_key:
-            hashed_api_key = bcrypt.generate_password_hash(new_api_key)
-            current_user.api_key = hashed_api_key
-
-        # Handle CV form submission
-        new_cv = request.form.get('cv')
-        if new_cv:
-            current_user.cv = new_cv
-
-        try:
-            db.session.commit()
-        except Exception as e:
-            # Log the error and show an error message to the user
-            print(e)
-            flash('An error occurred while updating your data. Please try again.', 'error')
-
-    # If the user's CV is empty, show a placeholder
-    cv = current_user.cv if current_user.cv else "Your CV goes here"
-
-    return render_template('dashboard.html', user=current_user, cv=cv)
 
 
 @app.route('/generator', methods=['GET', 'POST'])
