@@ -130,12 +130,6 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
 
-# ---------- ROUTES ---------- #
-# @app.route('/', methods=['GET', 'POST'])
-# def home():
-#     return render_template('test_home.html')
-
-
 @app.route('/', methods=['GET', 'POST'])
 def home():
     form = SignupForm()
@@ -147,7 +141,7 @@ def home():
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('login'))
-    return render_template('test_home.html', title='Register', form=form)
+    return render_template('signup.html', title='Register', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -159,7 +153,7 @@ def login():
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
                 return redirect(url_for('dashboard'))
-    return render_template('test_login.html', form=form)
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 @login_required
