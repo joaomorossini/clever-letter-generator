@@ -8,33 +8,61 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
         <title>Dashboard</title>
     </head>
-    <body>
+    <body class="bg-dark">
+        <div class="container col-6 justify-content-center border rounded-3 bg-dark-subtle">
 
-        <a href="{{ url_for('generator') }}">Generate Cover Letters | </a>
-        <a href="{{ url_for('logout') }}">Logout</a>
+            <nav class="row navbar bg-body-tertiary rounded-top-3 rounded-bottom-1 border-0">
+                <div class="container-fluid p-1">
+                    <div class="col-1 justify-content-start">
+                        <a class="navbar-brand ps-4">Morossini.AI</a>
+                    </div>
+                    <div class="col-4 text-end pe-4">
+                        <button class="btn btn-outline-success" type="button" href="{{ url_for('generator') }}">Generate</button>
+                        <button class="btn btn-outline-success" type="button" href="{{ url_for('logout') }}">Logout</button>
+                    </div>
+                </div>
+            </nav>
+            <div class="p-3">
+                <div class="text-center">
+                    <h1>My Dashboard</h1>
+                </div>
+                <div class="text-center">
+                    <p>You are logged in as {{ user.email }}</p>
+                </div>
+            </div>
+            <br>
+            <div class="container-fluid text-center p-2">
+                <form method="POST" action="" class="text-start">
+                    <div class="form-outline mx-5">
+                        <label class="form-label text-start" for="api_key">API Key:</label>
+                        {% if user.api_key %}
+                            <input type="password" id="api_key" name="api_key" value="{{ user.api_key }}" readonly class="form-control">
+                        {% else %}
+                            <input type="text" id="api_key" name="api_key" placeholder="Please set up your OpenAI API key" class="form-control">
+                        {% endif %}
+                    </div>
+                    <div class="form-outline my-2 mx-5 text-end">
+                        <input type="submit" value="Update API Key" class="btn btn-primary btn-block my-4">
+                    </div>
+                </form>
+                <br>
+                <form method="POST" action="" class="text-start">
+                    <div class="form-outline mt-4 mx-5">
+                        <label class="form-label text-start" for="cv">Update your CV:</label>
+                        {% if user.cv %}
+                            <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000" class="form-control">{{ user.cv }}</textarea>
+                        {% else %}
+                            <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000" placeholder="Your CV goes here" class="form-control"></textarea>
+                        {% endif %}
+                    </div>
+                    <div class="form-outline my-2 mx-5 text-end">
+                        <input type="submit" value="Update CV" class="btn btn-primary btn-block my-4">
+                    </div>
+                </form>
+            </div>
 
-        <h1>My Dashboard</h1>
-        <h3>You are logged in as {{ user.email }}</h3>
+        </div>
 
-        <form method="POST">
-            <label for="api_key">API Key:</label>
-            {% if user.api_key %}
-                <input type="password" id="api_key" name="api_key" value="{{ user.api_key }}" readonly>
-            {% else %}
-                <input type="text" id="api_key" name="api_key" placeholder="Please set up your OpenAI API key">
-            {% endif %}
-            <input type="submit" value="Update API Key">
-        </form>
-
-        <form method="POST">
-            <label for="cv">CV:</label>
-            {% if user.cv %}
-                <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000">{{ user.cv }}</textarea>
-            {% else %}
-                <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000" placeholder="Your CV goes here"></textarea>
-            {% endif %}
-            <input type="submit" value="Update CV">
-        </form>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     </body>
 </html>

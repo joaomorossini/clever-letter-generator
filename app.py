@@ -130,7 +130,7 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/signup', methods=['GET', 'POST'])
 def home():
     form = SignupForm()
 
@@ -161,8 +161,8 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route('/dashboard', methods=['GET', 'POST'])
-@login_required
+@app.route('/', methods=['GET', 'POST'])
+# @login_required
 def dashboard():
     if request.method == 'POST':
         # Handle API key form submission
