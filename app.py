@@ -130,7 +130,7 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def home():
     form = SignupForm()
 
@@ -161,7 +161,7 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/dashboard', methods=['GET', 'POST'])
 # @login_required
 def dashboard():
     if request.method == 'POST':
@@ -264,11 +264,11 @@ with app.app_context():
     except Exception as e:
         print("An error occurred while creating tables:", e)
 
-# TEMPORARY
-@app.after_request
-def add_header(response):
-    response.cache_control.no_store = True
-    return response
+# # TEMPORARY
+# @app.after_request
+# def add_header(response):
+#     response.cache_control.no_store = True
+#     return response
 
 
 # ---------- END ---------- #
