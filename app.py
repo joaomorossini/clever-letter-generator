@@ -96,10 +96,10 @@ class User(db.Model, UserMixin):
 
 class SignupForm(FlaskForm):
     email = StringField(validators=[
-                           InputRequired(), Email(), Length(min=4, max=50)], render_kw={"placeholder": "e-mail"})
+                           InputRequired(), Email(), Length(min=4, max=50)], render_kw={"placeholder": "Email *"})
 
     password = PasswordField(validators=[
-                             InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Password"})
+                             InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Password *"})
 
     submit = SubmitField('Signup')
 
@@ -113,10 +113,10 @@ class SignupForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField(validators=[
-                           InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "E-mail"})
+                           InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Email *"})
 
     password = PasswordField(validators=[
-                             InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Password"})
+                             InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Password *"})
 
     submit = SubmitField('Login')
 
@@ -204,6 +204,12 @@ def dashboard():
     # Fetch the logs from the database
     logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).all()
 
+    # Pagination
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    logs = logs.order_by(Log.timestamp.desc()).paginate(page=page, per_page=per_page)
+
+    # Downloading logs
     if 'download_logs' in request.form:
         # Create a string representation of the logs
         logs_str = "\n".join(f"{log.timestamp}\t{log.job_title}\t{log.employer_name}" for log in logs)
