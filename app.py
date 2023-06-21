@@ -107,8 +107,8 @@ class SignupForm(FlaskForm):
         existing_user_email = User.query.filter_by(
             email=email.data).first()
         if existing_user_email:
-            raise ValidationError(
-                'That user e-mail already exists. Please choose a different one.')
+            raise ValidationError('That user e-mail already exists. Please choose a different one.')
+            flash('That e-mail account has already been used', 'warning')
 
 
 class LoginForm(FlaskForm):
@@ -196,7 +196,7 @@ def dashboard():
         except Exception as e:
             # Log the error and show an error message to the user
             print(e)
-            flash('An error occurred while updating your data. Please try again.', 'error')
+            flash('An error occurred while updating your data. Please try again.', 'warning')
 
     # If the user's CV is empty, show a placeholder
     cv = current_user.cv if current_user.cv else "Your CV goes here"
@@ -230,7 +230,7 @@ def dashboard():
 def generator():
     # Check if the user's API key is set
     if not current_user.api_key:
-        flash('Please set your API key before generating a cover letter.', 'error')
+        flash('Please set your API key before generating a cover letter.', 'warning')
         return redirect(url_for('dashboard'))
 
     response = ""
@@ -274,7 +274,7 @@ def generator():
         # Retrieve the response from the session
         response = session.get('response', '')
         if response == '':
-            flash('Please generate a cover letter before downloading.', 'error')
+            flash('Please generate a cover letter before downloading.', 'warning')
             return render_template('generator.html', response=response, job_title=job_title, job_description=job_description,
                            employer_name=employer_name, employer_description=employer_description,
                            additional_instructions=additional_instructions)
