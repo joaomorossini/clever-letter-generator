@@ -40,16 +40,6 @@ Login
             </div>
         </form>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
         <!-- 2 column grid layout -->
         <div class="row mb-4">
             <div class="col-md-6 d-flex justify-content-center">

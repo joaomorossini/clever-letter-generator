@@ -107,8 +107,8 @@ class SignupForm(FlaskForm):
         existing_user_email = User.query.filter_by(
             email=email.data).first()
         if existing_user_email:
-            raise ValidationError('That user e-mail already exists. Please choose a different one.')
             flash('That e-mail account has already been used', 'warning')
+            raise ValidationError('That user e-mail already exists. Please choose a different one.')
 
 
 class LoginForm(FlaskForm):
@@ -163,11 +163,13 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user)
-                return redirect(url_for('dashboard'))
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user)
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'warning')
     return render_template('login.html', form=form)
+
 
 @app.route('/logout')
 @login_required

@@ -39,18 +39,7 @@ Sign Up
                 {{ form.submit(class="btn btn-primary btn-block my-4") }}
             </div>
         </form>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        </div>
+    </div>
         <!-- Pills content -->
 {% endblock content %}
 
