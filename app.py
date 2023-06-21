@@ -273,7 +273,6 @@ def generator():
         str_io.seek(0)
         # Check if employer_name and job_title are not None, else replace with 'Unknown'
         employer_name = employer_name if employer_name else 'Unknown Employer'
-        job_title = job_title if job_title else 'Unknown Job'
         # Format the filename
         filename = f"{employer_name} - {job_title} - {datetime.now().strftime('%Y.%m.%d')}.txt"
         return Response(

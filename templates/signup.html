@@ -34,11 +34,11 @@
             <form method="POST" action="">
                 {{ form.hidden_tag() }}
                 <div class="form-outline mt-4">
-                    {{ form.email(class="form-control") }}
+                    {{ form.email(class="form-control", required=True) }}
                     <label class="form-label" for="{{ form.email.id }}"></label>
                 </div>
                 <div class="form-outline my-2">
-                    {{ form.password(class="form-control") }}
+                    {{ form.password(class="form-control", required=True) }}
                     <label class="form-label" for="{{ form.password.id }}"></label>
                 </div>
                 <div class="form-outline my-2 text-end">

@@ -38,12 +38,12 @@
                     <form action="{{ url_for('generator') }}" method="post" class="text-start">
                         <div class="form-outline mx-5">
                             <label for="job_title" class="form-label text-start">Job Title:</label><br>
-                            <input type="text" id="job_title" name="job_title" value="{{ job_title if job_title }}" class="form-control">
+                            <input type="text" id="job_title" name="job_title" value="{{ job_title if job_title }}" class="form-control" required>
                         </div>
                         <br>
                         <div class="form-outline mx-5">
                             <label for="job_description" class="form-label text-start">Job Description:</label><br>
-                            <textarea id="job_description" name="job_description" class="form-control">{{ job_description if job_description }}</textarea>
+                            <textarea id="job_description" name="job_description" class="form-control" required>{{ job_description if job_description }}</textarea>
                             <br>
                         </div>
                         <div class="form-outline mx-5">
