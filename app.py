@@ -268,13 +268,16 @@ def generator():
         employer_name = ""
         employer_description = ""
         additional_instructions = ""
+        session['response'] = ""
 
     if 'download' in request.form:
         # Retrieve the response from the session
         response = session.get('response', '')
         if response == '':
             flash('Please generate a cover letter before downloading.', 'error')
-            return redirect(url_for('generator'))
+            return render_template('generator.html', response=response, job_title=job_title, job_description=job_description,
+                           employer_name=employer_name, employer_description=employer_description,
+                           additional_instructions=additional_instructions)
 
         str_io = io.StringIO()
         str_io.write(response)
