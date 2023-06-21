@@ -8,7 +8,7 @@ from time import time
 from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
 from flask import Flask, render_template, request, url_for, redirect, flash, send_file, Response, session
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, pagination
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -202,17 +202,16 @@ def dashboard():
     cv = current_user.cv if current_user.cv else "Your CV goes here"
 
     # Fetch the logs from the database
-    logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).all()
-
-    # Pagination
     page = request.args.get('page', 1, type=int)
     per_page = 10
-    logs = logs.order_by(Log.timestamp.desc()).paginate(page=page, per_page=per_page)
+    logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).paginate(page=page, per_page=per_page)
+    # Fetch all logs for download
+    all_logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).all()
 
     # Downloading logs
     if 'download_logs' in request.form:
         # Create a string representation of the logs
-        logs_str = "\n".join(f"{log.timestamp}\t{log.job_title}\t{log.employer_name}" for log in logs)
+        logs_str = "\n".join(f"{log.timestamp}\t{log.job_title}\t{log.employer_name}" for log in all_logs)
         str_io = io.StringIO()
         str_io.write(logs_str)
         str_io.seek(0)
@@ -273,6 +272,9 @@ def generator():
     if 'download' in request.form:
         # Retrieve the response from the session
         response = session.get('response', '')
+        if response == '':
+            flash('Please generate a cover letter before downloading.', 'error')
+            return redirect(url_for('generator'))
 
         str_io = io.StringIO()
         str_io.write(response)
