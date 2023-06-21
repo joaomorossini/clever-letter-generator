@@ -8,7 +8,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
         <title>Cover Letter Generator</title>
     </head>
-    <body class="bg-dark">
+    <body class="bg-light">
         <div>
             <a href="{{ url_for('dashboard')}}">My Dashboard</a>
         </div>
@@ -25,7 +25,8 @@
                 <textarea id="employer_description" name="employer_description"></textarea><br>
                 <label for="additional_instructions">Additional Instructions:</label><br>
                 <textarea id="additional_instructions" name="additional_instructions"></textarea><br>
-                <input type="submit" value="Generate Cover Letter">
+                <input type="submit" name="generate" value="Generate Cover Letter">
+                <input type="submit" name="clear" value="Clear Inputs">
             </form>
         </div>
         <div>

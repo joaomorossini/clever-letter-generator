@@ -176,6 +176,50 @@ def logout():
     return redirect(url_for('login'))
 
 
+@app.route('/dashboard', methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    if request.method == 'POST':
+        # Handle API key form submission
+        new_api_key = request.form.get('api_key')
+        if new_api_key:
+            hashed_api_key = bcrypt.generate_password_hash(new_api_key)
+            current_user.api_key = hashed_api_key
+
+        # Handle CV form submission
+        new_cv = request.form.get('cv')
+        if new_cv:
+            current_user.cv = new_cv
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            # Log the error and show an error message to the user
+            print(e)
+            flash('An error occurred while updating your data. Please try again.', 'error')
+
+    # If the user's CV is empty, show a placeholder
+    cv = current_user.cv if current_user.cv else "Your CV goes here"
+
+    # Fetch the logs from the database
+    logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).all()
+
+    if 'download_logs' in request.form:
+        # Create a string representation of the logs
+        logs_str = "\n".join(f"{log.timestamp}\t{log.job_title}\t{log.employer_name}" for log in logs)
+        str_io = io.StringIO()
+        str_io.write(logs_str)
+        str_io.seek(0)
+        filename = f"ai_cover_letter_log_{datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
+        return Response(
+            str_io.getvalue(),
+            mimetype="text/plain",
+            headers={"Content-disposition":
+                     f"attachment; filename={filename}"})
+
+    return render_template('dashboard.html', user=current_user, cv=cv, logs=logs)
+
+
 @app.route('/generator', methods=['GET', 'POST'])
 @login_required
 def generator():
@@ -200,9 +244,9 @@ def generator():
         additional_instructions = request.form.get('additional_instructions')
 
     if 'generate' in request.form:
-        prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
-                                        employer_name=employer_name, employer_description=employer_description,
-                                        additional_instructions=additional_instructions)
+        # prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
+        #                                 employer_name=employer_name, employer_description=employer_description,
+        #                                 additional_instructions=additional_instructions)
         # response = get_completion(prompt)
         response = "Teste Teste Teste Teste Teste "
 
@@ -260,13 +304,12 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 # Defining the helper function
 def get_completion(prompt, model="gpt-3.5-turbo"):
     messages = [{"role": "user", "content": prompt}]
-    # response = openai.ChatCompletion.create(
-    #     model=model,
-    #     messages=messages,
-    #     temperature=0,  # this is the degree of randomness of the model's output
-    # )
-    # return response.choices[0].message["content"]
-    return "Testando"
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=messages,
+        temperature=0,  # this is the degree of randomness of the model's output
+    )
+    return response.choices[0].message["content"]
 
 # Checking if database exists and creating a new one if it doesnt
 with app.app_context():
