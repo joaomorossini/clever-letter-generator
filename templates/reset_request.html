@@ -5,22 +5,30 @@ Request Password Reset
 {% endblock title %}
 
 {% block content %}
-    <!-- page content here -->
-    <h1>Request Password Reset</h1>
+   <!-- page content here -->
 
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
+    <div class="container col-xs-9 col-sm-6 col-md-3 justify-content-center my-5 p-5 border rounded-3 bg-dark-subtle">
+        <div class="mb-5 text-center">
+            <h1>Request Password Reset</h1>
+        </div>
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.email.label }}<br>
-            {{ form.email(size=20) }}<br>
-            {% for error in form.email.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-outline mt-4">
+                <p>
+                    {{ form.email.label }}<br>
+                    {{ form.email(size=20, class="form-control", required=True) }}<br>
+                    {% for error in form.email.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p class="text-end">{{ form.submit(class="btn btn-primary btn-block my-4") }}</p>
+            </div>
+        </form>
+    </div>
+
 {% endblock content %}

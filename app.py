@@ -11,7 +11,7 @@ from flask import Flask, render_template, request, url_for, redirect, flash, sen
 from flask_sqlalchemy import SQLAlchemy, pagination
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import InputRequired, Length, ValidationError, Email, EqualTo
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
@@ -112,12 +112,9 @@ class SignupForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = StringField(validators=[
-                           InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Email *"})
-
-    password = PasswordField(validators=[
-                             InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Password *"})
-
+    email = StringField(validators=[InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Email *"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=50)], render_kw={"placeholder": "Password *"})
+    remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
 
@@ -146,8 +143,9 @@ class Log(db.Model):
 #---------- ROUTES ----------
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    if current_user.is_authenticated:
+        return redirect(url_for('generator'))
     form = SignupForm()
-
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(email=form.email.data, password=hashed_password)
@@ -160,11 +158,13 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('generator'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user)
+            login_user(user, remember=form.remember.data)
             return redirect(url_for('dashboard'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'warning')

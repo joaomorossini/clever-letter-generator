@@ -6,26 +6,30 @@ Reset Your Password
 
 {% block content %}
     <!-- page content here -->
-    <title>Reset Password</title>
-    </head>
-    <body class="bg-dark">
-    <h1>Reset Password</h1>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=20) }}<br>
-            {% for error in form.password.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.confirm_password.label }}<br>
-            {{ form.confirm_password(size=20) }}<br>
-            {% for error in form.confirm_password.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+    <div class="container col-xs-9 col-sm-6 col-md-3 justify-content-center my-5 p-5 border rounded-3 bg-dark-subtle">
+        <div class="mb-5 text-center">
+            <h1>Reset Password</h1>
+        </div>
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-outline mt-4">
+                <p>
+                    {{ form.password.label }}<br>
+                    {{ form.password(size=20, class="form-control", required=True) }}<br>
+                    {% for error in form.password.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.confirm_password.label }}<br>
+                    {{ form.confirm_password(size=20, class="form-control", required=True) }}<br>
+                    {% for error in form.confirm_password.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p class="text-end">{{ form.submit(class="btn btn-primary btn-block my-4") }}</p>
+            </div>
+        </form>
+    </div>
 {% endblock content %}
