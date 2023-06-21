@@ -7,7 +7,7 @@ import io
 from time import time
 from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
-from flask import Flask, render_template, request, url_for, redirect, flash, send_file, Response
+from flask import Flask, render_template, request, url_for, redirect, flash, send_file, Response, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -244,11 +244,13 @@ def generator():
         additional_instructions = request.form.get('additional_instructions')
 
     if 'generate' in request.form:
-        # prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
-        #                                 employer_name=employer_name, employer_description=employer_description,
-        #                                 additional_instructions=additional_instructions)
-        # response = get_completion(prompt)
-        response = "Teste Teste Teste Teste Teste "
+        prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
+                                        employer_name=employer_name, employer_description=employer_description,
+                                        additional_instructions=additional_instructions)
+        response = get_completion(prompt)
+
+        # Save the response in the user's session
+        session['response'] = response
 
         # Create a log entry
         log = Log(job_title=job_title, employer_name=employer_name, user_id=current_user.id)
@@ -261,6 +263,24 @@ def generator():
         employer_name = ""
         employer_description = ""
         additional_instructions = ""
+
+    if 'download' in request.form:
+        # Retrieve the response from the session
+        response = session.get('response', '')
+
+        str_io = io.StringIO()
+        str_io.write(response)
+        str_io.seek(0)
+        # Check if employer_name and job_title are not None, else replace with 'Unknown'
+        employer_name = employer_name if employer_name else 'Unknown Employer'
+        job_title = job_title if job_title else 'Unknown Job'
+        # Format the filename
+        filename = f"{employer_name} - {job_title} - {datetime.now().strftime('%Y.%m.%d')}.txt"
+        return Response(
+            str_io.getvalue(),
+            mimetype="text/plain",
+            headers={"Content-disposition":
+                         f"attachment; filename={filename}"})
 
     return render_template('generator.html', response=response, job_title=job_title, job_description=job_description,
                            employer_name=employer_name, employer_description=employer_description,
