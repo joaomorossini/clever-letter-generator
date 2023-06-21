@@ -9,35 +9,73 @@
         <title>Cover Letter Generator</title>
     </head>
     <body class="bg-dark">
-        <div>
-            <a href="{{ url_for('dashboard')}}">My Dashboard</a>
-        </div>
-        <h1>AI COVER LETTER GENERATOR</h1>
-        <div>
-            <form action="{{ url_for('generator') }}" method="post">
-                <label for="job_title">Job Title:</label>
-                <input type="text" id="job_title" name="job_title" value="{{ job_title if job_title }}">
+            <div class="container col-6 justify-content-center border rounded-3 bg-dark-subtle">
 
-                <label for="job_description">Job Description:</label>
-                <textarea id="job_description" name="job_description">{{ job_description if job_description }}</textarea>
+                <nav class="row navbar bg-body-tertiary rounded-top-3 rounded-bottom-1 border-0">
+                    <div class="container-fluid p-1">
+                        <div class="col-1 justify-content-start">
+                            <a class="navbar-brand ps-4">Morossini.AI</a>
+                        </div>
+                        <div class="col-4 text-end pe-4">
+                            <a class="btn btn-outline-success" type="button" href="{{ url_for('dashboard') }}">Dashboard</a>
+                            <a class="btn btn-outline-success" type="button" href="{{ url_for('logout') }}">Logout</a>
+                        </div>
+                    </div>
+                </nav>
 
-                <label for="employer_name">Employer Name:</label>
-                <input type="text" id="employer_name" name="employer_name" value="{{ employer_name if employer_name }}">
+                <div class="p-3">
+                    <div class="text-center">
+                        <h1>Cover Letter Generator</h1>
+                    </div>
+{#                    <div class="text-center">#}
+{#                        <p>You are logged in as {{ user.email }}</p>#}
+{#                    </div>#}
+                </div>
 
-                <label for="employer_description">Employer Description:</label>
-                <textarea id="employer_description" name="employer_description">{{ employer_description if employer_description }}</textarea>
+                <br>
 
-                <label for="additional_instructions">Additional Instructions:</label>
-                <textarea id="additional_instructions" name="additional_instructions">{{ additional_instructions if additional_instructions }}</textarea>
+                <div class="container-fluid text-center p-2">
+                    <form action="{{ url_for('generator') }}" method="post" class="text-start">
+                        <div class="form-outline mx-5">
+                            <label for="job_title" class="form-label text-start">Job Title:</label><br>
+                            <input type="text" id="job_title" name="job_title" value="{{ job_title if job_title }}" class="form-control">
+                        </div>
+                        <br>
+                        <div class="form-outline mx-5">
+                            <label for="job_description" class="form-label text-start">Job Description:</label><br>
+                            <textarea id="job_description" name="job_description" class="form-control">{{ job_description if job_description }}</textarea>
+                            <br>
+                        </div>
+                        <div class="form-outline mx-5">
+                            <label for="employer_name" class="form-label text-start">Employer Name:</label><br>
+                            <input type="text" id="employer_name" name="employer_name" value="{{ employer_name if employer_name }}" class="form-control">
+                            <br>
+                        </div>
+                        <div class="form-outline mx-5">
+                            <label for="employer_description" class="form-label text-start">Employer Description:</label><br>
+                            <textarea id="employer_description" name="employer_description" class="form-control">{{ employer_description if employer_description }}</textarea>
+                            <br>
+                        </div>
+                        <div class="form-outline mx-5">
+                            <label for="additional_instructions" class="form-label text-start">Additional Instructions:</label><br>
+                            <textarea id="additional_instructions" name="additional_instructions" class="form-control">{{ additional_instructions if additional_instructions }}</textarea>
+                            <br>
+                        </div>
+                        <div class="form-outline mx-5 text-end">
+                            <input type="submit" name="generate" value="  Generate  " class="btn btn-primary btn-block my-4">
+                            <input type="submit" name="clear" value="Clear Form" class="btn btn-primary btn-block my-4">
+                        </div>
+                    </form>
+                    <div class="form-outline mx-5 mt-3 justify-content-around">
+                        <h2 class="text-center">Generated Cover Letter:</h2>
+                        <p>{{ response }}</p>
+                        <div class="text-end">
+                            <input type="submit" name="download" value="Download" class="btn btn-primary btn-block my-4">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <input type="submit" name="generate" value="Generate Cover Letter">
-                <input type="submit" name="clear" value="Clear Inputs">
-            </form>
-        </div>
-        <div>
-            <h2>Generated Cover Letter:</h2>
-            <p>{{ response }}</p>
-        </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     </body>
 </html>
