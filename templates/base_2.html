@@ -6,8 +6,10 @@
               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-        <title>{% block title %}Base{% endblock title %}</title>
-        <link rel="icon" type="image/x-icon" href="static/images/logo3_hr.png">
+        <link href="static/css/styles.css" rel="stylesheet">
+        <title>{% block title %}
+        {% endblock title %}</title>
+        <link rel="icon" type="image/x-icon" href="static/images/favicon.png">
     </head>
 
     <body class="bg-dark">
@@ -24,16 +26,17 @@
                 {% endif %}
             {% endwith %}
         </div>
+
         <div class="container col-6 justify-content-center border rounded-3 bg-dark-subtle">
 
             <nav class="row navbar bg-body-tertiary rounded-top-3 rounded-bottom-1 border-0">
                 <div class="container-fluid p-1">
                     <div class="col-1 justify-content-start ps-4">
-    {#                  <a class="navbar-brand ps-4">Morossini.AI</a>#}
-                        <img src="static/images/logo3_hr.png" height="40" style="vertical-align:middle">
+                        <img src="static/images/logo.png" height="40" style="vertical-align:middle">
                     </div>
-                    <div class="col-4 text-end pe-4">
-                        <a class="btn btn-outline-success" type="button" href="{{ url_for('generator') }}">Generate</a>
+                    <div class="col-5 text-end pe-4">
+                        <a class="btn btn-outline-success" type="button" href="{{ url_for('generator') }}">Generator</a>
+                        <a class="btn btn-outline-success" type="button" href="{{ url_for('dashboard') }}">Dashboard</a>
                         <a class="btn btn-outline-success" type="button" href="{{ url_for('logout') }}">Logout</a>
                     </div>
                 </div>
@@ -43,7 +46,15 @@
                 <!-- page content here -->
             {% endblock content %}
         </div>
+
+        <div class="p-1 justify-content-center d-flex flex-column align-items-center">
+            <span>
+                <a class="custom-contact-info" href="https://github.com/joaomorossini">GitHub</a>
+                <a class="custom-contact-info" href="https://www.linkedin.com/in/joaomorossini/">LinkedIn</a>
+                <a class="custom-contact-info" href="mailto:joaomorossini@duck.com">Email</a>
+            </span>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     </body>
-
 </html>
