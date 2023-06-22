@@ -35,8 +35,8 @@
                         <img src="static/images/logo.png" height="40" style="vertical-align:middle">
                     </div>
                     <div class="col-5 text-end pe-4">
-                        <a class="btn btn-outline-success" type="button" href="{{ url_for('generator') }}">Generator</a>
-                        <a class="btn btn-outline-success" type="button" href="{{ url_for('dashboard') }}">Dashboard</a>
+                        <a class="btn btn-outline-success {% if request.path == url_for('generator') %}active{% endif %}" type="button" href="{{ url_for('generator') }}">Generator</a>
+                        <a class="btn btn-outline-success {% if request.path == url_for('dashboard') %}active{% endif %}" type="button" href="{{ url_for('dashboard') }}">Dashboard</a>
                         <a class="btn btn-outline-success" type="button" href="{{ url_for('logout') }}">Logout</a>
                     </div>
                 </div>
