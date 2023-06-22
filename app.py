@@ -141,60 +141,6 @@ class Log(db.Model):
 
 
 #---------- ROUTES ----------
-@app.route('/dashboard', methods=['GET', 'POST'])
-@app.route('/dashboard/<toggle>', methods=['GET', 'POST'])
-@login_required
-def dashboard(toggle=None):
-    if toggle == 'toggle_api_key_visibility':
-        session['api_key_visible'] = not session.get('api_key_visible', False)
-
-    if request.method == 'POST':
-        # Handle API key form submission
-        new_api_key = request.form.get('api_key')
-        if new_api_key and new_api_key != '******':
-            hashed_api_key = bcrypt.generate_password_hash(new_api_key).decode('utf-8')
-            current_user.api_key = hashed_api_key
-            flash('API key updated successfully.', 'success')
-
-        # Handle CV form submission
-        new_cv = request.form.get('cv')
-        if new_cv:
-            current_user.cv = new_cv
-
-        try:
-            db.session.commit()
-        except Exception as e:
-            # Log the error and show an error message to the user
-            print(e)
-            flash('An error occurred while updating your data. Please try again.', 'warning')
-
-    # If the user's CV is empty, show a placeholder
-    cv = current_user.cv if current_user.cv else "Your CV goes here"
-
-    # Fetch the logs from the database
-    page = request.args.get('page', 1, type=int)
-    per_page = 10
-    logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).paginate(page=page, per_page=per_page)
-    # Fetch all logs for download
-    all_logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).all()
-
-    # Downloading logs
-    if 'download_logs' in request.form:
-        # Create a string representation of the logs
-        logs_str = "\n".join(f"{log.timestamp}\t{log.job_title}\t{log.employer_name}" for log in all_logs)
-        str_io = io.StringIO()
-        str_io.write(logs_str)
-        str_io.seek(0)
-        filename = f"ai_cover_letter_log_{datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
-        return Response(
-            str_io.getvalue(),
-            mimetype="text/plain",
-            headers={"Content-disposition":
-                     f"attachment; filename={filename}"})
-
-    return render_template('dashboard.html', user=current_user, cv=cv, logs=logs)
-
-
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if current_user.is_authenticated:
@@ -304,6 +250,66 @@ def generator():
                            additional_instructions=additional_instructions)
 
 
+@app.route('/dashboard', methods=['GET', 'POST'])
+@app.route('/dashboard/<toggle>', methods=['GET', 'POST'])
+@login_required
+def dashboard(toggle=None):
+    if toggle == 'toggle_api_key_visibility':
+        session['api_key_visible'] = not session.get('api_key_visible', False)
+
+    if request.method == 'POST':
+        # Handle API key form submission
+        new_api_key = request.form.get('api_key')
+        if new_api_key and new_api_key != '******':
+            hashed_api_key = bcrypt.generate_password_hash(new_api_key).decode('utf-8')
+            current_user.api_key = hashed_api_key
+            flash('API key updated successfully.', 'success')
+
+        # Handle CV form submission
+        new_cv = request.form.get('cv')
+        if new_cv:
+            current_user.cv = new_cv
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            # Log the error and show an error message to the user
+            print(e)
+            flash('An error occurred while updating your data. Please try again.', 'warning')
+
+    # If the user's CV is empty, show a placeholder
+    cv = current_user.cv if current_user.cv else "Your CV goes here"
+
+    # Fetch the logs from the database
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).paginate(page=page, per_page=per_page)
+    # Fetch all logs for download
+    all_logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).all()
+
+    # Downloading logs
+    if 'download_logs' in request.form:
+        # Create a string representation of the logs
+        logs_str = "\n".join(f"{log.timestamp}\t{log.job_title}\t{log.employer_name}" for log in all_logs)
+        str_io = io.StringIO()
+        str_io.write(logs_str)
+        str_io.seek(0)
+        filename = f"ai_cover_letter_log_{datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
+        return Response(
+            str_io.getvalue(),
+            mimetype="text/plain",
+            headers={"Content-disposition":
+                     f"attachment; filename={filename}"})
+
+    if 'delete_api_key' in request.form:
+        current_user.api_key = ''
+        db.session.commit()
+        flash('API key deleted successfully.', 'success')
+
+    return render_template('dashboard.html', user=current_user, cv=cv, logs=logs)
+
+
+
 @app.route('/reset_request', methods=['GET', 'POST'])
 def reset_request():
     form = RequestResetForm()
@@ -329,6 +335,16 @@ def reset_token(token):
         db.session.commit()
         return redirect(url_for('login'))
     return render_template('reset_token.html', form=form)
+
+
+@app.route('/delete_account', methods=['POST'])
+@login_required
+def delete_account():
+    user = User.query.get(current_user.id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('Your account has been deleted.', 'success')
+    return redirect(url_for('home'))
 
 
 # ---------- ENVIRONMENT VARIABLE API KEY ---------- #

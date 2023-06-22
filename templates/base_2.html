@@ -27,20 +27,36 @@
             {% endwith %}
         </div>
 
-        <div class="container col-6 justify-content-center border rounded-3 bg-dark-subtle">
+        <div class="container col-8 justify-content-center border rounded-3 bg-dark-subtle">
 
             <nav class="row navbar bg-body-tertiary rounded-top-3 rounded-bottom-1 border-0">
                 <div class="container-fluid p-1">
                     <div class="col-1 justify-content-start ps-4">
                         <img src="static/images/logo.png" height="40" style="vertical-align:middle">
                     </div>
-                    <div class="col-5 text-end pe-4">
+                    <div class="col-6 text-end pe-4">
                         <a class="btn btn-outline-success {% if request.path == url_for('generator') %}active{% endif %}" type="button" href="{{ url_for('generator') }}">Generator</a>
                         <a class="btn btn-outline-success {% if request.path == url_for('dashboard') %}active{% endif %}" type="button" href="{{ url_for('dashboard') }}">Dashboard</a>
-                        <a class="btn btn-outline-success" type="button" href="{{ url_for('logout') }}">Logout</a>
+
+                        <div class="d-inline-block">
+                            <a class="btn btn-outline-success dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                My Account
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('reset_request') }}">Change Password</a></li>
+                                <li>
+                                    <form method="POST" action="{{ url_for('delete_account') }}">
+                                        <input type="submit" value="Delete Account" class="dropdown-item text-danger" onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.')">
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
             </nav>
+
             <!-- page content block -->
             {% block content %}
                 <!-- page content here -->
