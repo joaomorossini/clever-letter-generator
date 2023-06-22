@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_1.html" %}
 
 {% block title %}
 Request Password Reset
@@ -6,10 +6,8 @@ Request Password Reset
 
 {% block content %}
    <!-- page content here -->
-
-    <div class="container col-xs-9 col-sm-6 col-md-3 justify-content-center my-5 p-5 border rounded-3 bg-dark-subtle">
         <div class="mb-5 text-center">
-            <h1>Request Password Reset</h1>
+            <h4>Request Password Reset</h4>
         </div>
 
         {% if message %}
@@ -29,6 +27,5 @@ Request Password Reset
                 <p class="text-end">{{ form.submit(class="btn btn-primary btn-block my-4") }}</p>
             </div>
         </form>
-    </div>
 
 {% endblock content %}

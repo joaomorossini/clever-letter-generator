@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_1.html" %}
 
 {% block title %}
 Reset Your Password
@@ -6,9 +6,8 @@ Reset Your Password
 
 {% block content %}
     <!-- page content here -->
-    <div class="container col-xs-9 col-sm-6 col-md-3 justify-content-center my-5 p-5 border rounded-3 bg-dark-subtle">
         <div class="mb-5 text-center">
-            <h1>Reset Password</h1>
+            <h4>Reset Password</h4>
         </div>
 
         <form method="POST">
@@ -31,5 +30,4 @@ Reset Your Password
                 <p class="text-end">{{ form.submit(class="btn btn-primary btn-block my-4") }}</p>
             </div>
         </form>
-    </div>
 {% endblock content %}

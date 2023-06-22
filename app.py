@@ -72,7 +72,7 @@ If you did not make this request then simply ignore this email and no changes wi
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), nullable=False, unique=True)
-    password = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(500), nullable=False)
     api_key = db.Column(db.String(200))
     cv = db.Column(db.String(5000), default='')
 
@@ -141,52 +141,20 @@ class Log(db.Model):
 
 
 #---------- ROUTES ----------
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    if current_user.is_authenticated:
-        return redirect(url_for('generator'))
-    form = SignupForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(email=form.email.data, password=hashed_password)
-        db.session.add(user)
-        db.session.commit()
-        flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('login'))
-    return render_template('signup.html', title='Register', form=form)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('generator'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Login Unsuccessful. Please check email and password', 'warning')
-    return render_template('login.html', form=form)
-
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
-
-
 @app.route('/dashboard', methods=['GET', 'POST'])
+@app.route('/dashboard/<toggle>', methods=['GET', 'POST'])
 @login_required
-def dashboard():
+def dashboard(toggle=None):
+    if toggle == 'toggle_api_key_visibility':
+        session['api_key_visible'] = not session.get('api_key_visible', False)
+
     if request.method == 'POST':
         # Handle API key form submission
         new_api_key = request.form.get('api_key')
-        if new_api_key:
-            hashed_api_key = bcrypt.generate_password_hash(new_api_key)
+        if new_api_key and new_api_key != '******':
+            hashed_api_key = bcrypt.generate_password_hash(new_api_key).decode('utf-8')
             current_user.api_key = hashed_api_key
+            flash('API key updated successfully.', 'success')
 
         # Handle CV form submission
         new_cv = request.form.get('cv')
@@ -225,6 +193,43 @@ def dashboard():
                      f"attachment; filename={filename}"})
 
     return render_template('dashboard.html', user=current_user, cv=cv, logs=logs)
+
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    if current_user.is_authenticated:
+        return redirect(url_for('generator'))
+    form = SignupForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Your account has been created! You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    return render_template('signup.html', title='Register', form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('generator'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'warning')
+    return render_template('login.html', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 
 @app.route('/generator', methods=['GET', 'POST'])

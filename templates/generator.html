@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_2.html" %}
 
 {% block title %}
 Generator
@@ -6,19 +6,6 @@ Generator
 
 {% block content %}
     <!-- page content here -->
-    <div class="container col-6 justify-content-center border rounded-3 bg-dark-subtle">
-
-        <nav class="row navbar bg-body-tertiary rounded-top-3 rounded-bottom-1 border-0">
-            <div class="container-fluid p-1">
-                <div class="col-1 justify-content-start">
-                    <a class="navbar-brand ps-4">Morossini.AI</a>
-                </div>
-                <div class="col-4 text-end pe-4">
-                    <a class="btn btn-outline-success" type="button" href="{{ url_for('dashboard') }}">Dashboard</a>
-                    <a class="btn btn-outline-success" type="button" href="{{ url_for('logout') }}">Logout</a>
-                </div>
-            </div>
-        </nav>
 
         <div class="p-3">
             <div class="text-center">
@@ -73,5 +60,4 @@ Generator
                 </div>
             </div>
         </div>
-    </div>
 {% endblock content %}
