@@ -21,7 +21,7 @@ Dashboard
         <div class="container-fluid text-center p-2">
             <form method="POST" action="" class="text-start">
                 <div class="form-outline mx-5">
-                    <label class="form-label text-start" for="api_key">API Key* (<a class="help" href="https://en.wikipedia.org/wiki/API_key">(What's an API key? </a> and <a class="help" href="https://platform.openai.com/account/api-keys">Where can I get one?</a>)</label>
+                    <label class="form-label text-start" for="api_key">OpenAI API Key* (<a class="help" href="https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/">Help</a>)</label>
                     {% if user.api_key %}
                         <input type="password" id="api_key" name="api_key" value="{{ user.api_key }}" readonly class="form-control">
                     {% else %}
