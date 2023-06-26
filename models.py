@@ -1,13 +1,10 @@
 # External dependencies
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
 import jwt
+from flask_login import UserMixin
 from time import time
 from datetime import datetime
 # Internal dependencies
-from app import app
-
-db = SQLAlchemy(app)
+from app import app, db
 
 
 class User(db.Model, UserMixin):
