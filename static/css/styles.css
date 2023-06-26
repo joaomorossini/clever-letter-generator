@@ -2,3 +2,8 @@
     color: #408458;
     padding-inline: 5px;
 }
+
+.help {
+    font-size: small;
+    font-style: italic;
+}
