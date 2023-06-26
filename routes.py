@@ -1,25 +1,20 @@
-from flask import render_template, request, url_for, redirect, flash, send_file, Response, session
+# External dependencies
+import openai
+import io
+from datetime import datetime
+from flask import render_template, request, url_for, redirect, flash, Response, session
 from flask_login import login_user, login_required, logout_user, current_user
+from flask_mail import Message
+# Internal dependencies
 from models import User, Log
 from forms import SignupForm, LoginForm, RequestResetForm, ResetPasswordForm
 from app import app, db, bcrypt, mail, login_manager
-import openai
+from prompt_template import prompt_template
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-
-def send_reset_email(user):
-    token = user.get_reset_token()
-    msg = Message('Password Reset Request',
-                  sender='noreply@demo.com',
-                  recipients=[user.email])
-    msg.body = f'''To reset your password, visit the following link:
-{url_for('reset_token', token=token, _external=True)}
-If you did not make this request then simply ignore this email and no changes will be made.
-'''
-    mail.send(msg)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -200,6 +195,18 @@ def reset_request():
             send_reset_email(user)
             message = 'An e-mail has been sent with instructions to reset your password.'
     return render_template('reset_request.html', form=form, message=message)
+
+
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request',
+                  sender='noreply@demo.com',
+                  recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+{url_for('reset_token', token=token, _external=True)}
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+    mail.send(msg)
 
 
 @app.route('/reset_request/<token>', methods=['GET', 'POST'])

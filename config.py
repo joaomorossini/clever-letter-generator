@@ -1,9 +1,12 @@
+# External dependencies
 import os
 from dotenv import load_dotenv, find_dotenv
 
 # Setting up environment
 _ = load_dotenv(find_dotenv())  # read local .env file
 
+
+# Creating Config class
 class Config(object):
     # Defining the path to the database
     root_folder = os.path.dirname(os.path.abspath(__file__))
@@ -19,9 +22,11 @@ class Config(object):
     MAIL_PASSWORD = os.getenv('EMAIL_PASS')
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
+
 class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = False
+
 
 class ProductionConfig(Config):
     DEBUG = False

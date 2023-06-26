@@ -1,10 +1,14 @@
+# External dependencies
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+import jwt
 from time import time
 from datetime import datetime
+# Internal dependencies
 from app import app
 
 db = SQLAlchemy(app)
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -30,6 +34,7 @@ class User(db.Model, UserMixin):
         except jwt.InvalidTokenError:
             return None
         return User.query.get(user_id)
+
 
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
