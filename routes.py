@@ -137,8 +137,7 @@ def dashboard(toggle=None):
         # Handle API key form submission
         new_api_key = request.form.get('api_key')
         if new_api_key and new_api_key != '******':
-            hashed_api_key = bcrypt.generate_password_hash(new_api_key).decode('utf-8')
-            current_user.api_key = hashed_api_key
+            current_user.api_key = new_api_key
             flash('API key updated successfully.', 'success')
 
         # Handle CV form submission
@@ -238,7 +237,7 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
     # Check the current environment
     if app.config['DEBUG']:
         # Use your own API key for development
-        api_key = app.config['OPENAI_API_KEY']
+        api_key = app.config['OPENAI_API_KEY_DEV']
     else:
         # Use the user's API key for production
         api_key = current_user.api_key

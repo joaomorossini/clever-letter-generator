@@ -35,3 +35,10 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
+
+# How does the app know to use DevelopmentConfig or ProductionConfig?
+# The app will use the config class that it finds first in the list of classes.
+# In this case, it will use DevelopmentConfig.
+# Why?
+# Because it will be the first class in the list of classes that it finds.
+# How can I test it in a production environment?
