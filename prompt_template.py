@@ -1,3 +1,5 @@
+from models import *
+
 # Development
 # prompt_template = f"""Generate a one paragraph long cover letter
 # based on the info delimited by double angle brackets.
@@ -6,7 +8,7 @@
 # additional instructions: {additional_instructions}>>"""
 
 # Production
-prompt_template = f"""Based on the info below, delimited by angle brackets, create a professional
+prompt_template = """Based on the info below, delimited by angle brackets, create a professional
 cover letter, which should be structured as follows:
 
 Paragraph 1: Greeting and introduction. Try to be a little creative here
@@ -22,5 +24,5 @@ further explore the ways in which I could be of value to the employer.
 
 Finish with 'Sincerely,'
 
-CV: <{cv}> | Employer Name: <{employer_name}> | Employer description: <{employer_description}\
+CV: <{cv}> | Employer Name: <{employer_name}> | Employer description: <{employer_description}
 Job Title: <{job_title}> | Job Description: <{job_description}> | Additional Instructions: <{additional_instructions}>"""
