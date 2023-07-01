@@ -22,11 +22,18 @@ Dashboard
             <form method="POST" action="" class="text-start">
                 <div class="form-outline mx-5">
                     <label class="form-label text-start" for="api_key">OpenAI API Key* (<a class="help" href="https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/">Help</a>)</label>
-                    {% if user.api_key %}
-                        <input type="password" id="api_key" name="api_key" value="{{ user.api_key }}" readonly class="form-control">
-                    {% else %}
-                        <input type="text" id="api_key" name="api_key" placeholder="Please set up your OpenAI API key" class="form-control">
-                    {% endif %}
+                    <div class="input-group">
+                        {% if user.api_key %}
+                            <input type="{{ 'text' if session.get('api_key_visible', False) else 'password' }}" id="api_key" name="api_key" value="{{ user.api_key }}" readonly class="form-control">
+                        {% else %}
+                            <input type="{{ 'text' if session.get('api_key_visible', False) else 'password' }}" id="api_key" name="api_key" placeholder="Please set up your OpenAI API key" class="form-control">
+                        {% endif %}
+                        <a href="{{ url_for('dashboard', toggle='toggle_api_key_visibility') }}" class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                <path d="M1.05 8a.9.9 0 0 1 .9-.9h12.1a.9.9 0 0 1 .9.9v0a.9.9 0 0 1-.9.9H1.95a.9.9 0 0 1-.9-.9v0zm7.9 2.6a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2zm0 1.3a3.9 3.9 0 1 0 0-7.8 3.9 3.9 0 0 0 0 7.8z"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
                 <div class="form-outline my-2 mx-5 text-end">
                     <input type="submit" value="Update API Key" class="btn btn-primary btn-block my-4">
