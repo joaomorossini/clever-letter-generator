@@ -35,11 +35,6 @@ login_manager.login_view = 'login'
 from routes import *
 
 
-# Create tables if they do not exist
-# @app.before_first_request
-# def create_tables():
-#     db.create_all()
-
 with app.app_context():
     try:
         db.create_all()
