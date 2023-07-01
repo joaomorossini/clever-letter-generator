@@ -33,7 +33,7 @@
                 <div class="container-fluid p-1">
                     <div class="col-1 justify-content-start ps-5">
                         <a href="{{ url_for('generator')}}">
-                            <img src="static/img/logo.png" height="40" style="vertical-align:top">
+                            <img src="{{ url_for('static', filename='img/logo.png') }}" height="40" style="vertical-align:top">
                         </a>
                     </div>
                     <div class="col-6 text-end pe-5">

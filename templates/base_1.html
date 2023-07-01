@@ -29,7 +29,7 @@
         <div class="container col-xs-9 col-sm-6 col-md-3 justify-content-center mt-5 p-5 border rounded-3 bg-dark-subtle">
             <div class="d-flex flex-column align-items-center">
                 <a href="{{ url_for('login')}}">
-                    <img src="static/img/logo.png" height="40" style="vertical-align:top">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}"  height="40" style="vertical-align:top">
                 </a>
             </div>
 
