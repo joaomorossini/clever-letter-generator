@@ -9,7 +9,7 @@
         <link href="static/css/styles.css" rel="stylesheet">
         <title>{% block title %}
         {% endblock title %}</title>
-        <link rel="icon" type="image/x-icon" href="static/images/favicon.png">
+        <link rel="icon" type="image/x-icon" href="static/img/favicon.png">
     </head>
 
     <body class="bg-dark">
@@ -33,7 +33,7 @@
                 <div class="container-fluid p-1">
                     <div class="col-1 justify-content-start ps-5">
                         <a href="{{ url_for('generator')}}">
-                            <img src="static/images/logo.png" height="40" style="vertical-align:top">
+                            <img src="static/img/logo.png" height="40" style="vertical-align:top">
                         </a>                    </div>
                     <div class="col-6 text-end pe-5">
                         <a class="btn btn-outline-success {% if request.path == url_for('generator') %}active{% endif %}" type="button" href="{{ url_for('generator') }}">Generator</a>

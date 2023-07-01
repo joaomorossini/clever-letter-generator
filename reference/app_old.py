@@ -26,7 +26,7 @@ app = Flask(__name__)
 
 # Defining the path to the database
 root_folder = os.path.dirname(os.path.abspath(__file__))
-database_path = os.path.join(root_folder, 'instance', 'database.db')
+database_path = os.path.join(root_folder, '../instance', 'database.db')
 
 # Configuring the database
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{database_path}"  # Connecting app to the database
@@ -229,8 +229,8 @@ def generator():
         if response == '':
             flash('Please generate a cover letter before downloading.', 'warning')
             return render_template('generator.html', response=response, job_title=job_title, job_description=job_description,
-                           employer_name=employer_name, employer_description=employer_description,
-                           additional_instructions=additional_instructions)
+                                   employer_name=employer_name, employer_description=employer_description,
+                                   additional_instructions=additional_instructions)
 
         str_io = io.StringIO()
         str_io.write(response)
