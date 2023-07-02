@@ -178,7 +178,7 @@ def dashboard(toggle=None):
         str_io = io.StringIO()
         str_io.write(logs_str)
         str_io.seek(0)
-        filename = f"ai_cover_letter_log_{datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
+        filename = f"clever_letter_generator_log_{datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
         return Response(
             str_io.getvalue(),
             mimetype="text/plain",
