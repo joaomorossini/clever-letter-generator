@@ -10,16 +10,18 @@ from flask_mail import Message
 # Internal dependencies
 from models import User, Log
 from forms import SignupForm, LoginForm, RequestResetForm, ResetPasswordForm
-from app import app, db, bcrypt, mail, login_manager
+from app import app, db, bcrypt, mail, login_manager, limiter
 from prompt_template import prompt_template
 
 
 @login_manager.user_loader
+@limiter.limit("10/minute")
 def load_user(user_id):
     return User.query.get(int(user_id))
 
 
 @app.route('/', methods=['GET', 'POST'])
+@limiter.limit("10/minute")
 def home():
     if current_user.is_authenticated:
         return redirect(url_for('generator'))
@@ -35,6 +37,7 @@ def home():
 
 
 @app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("10/minute")
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('generator'))
@@ -45,7 +48,7 @@ def login():
             login_user(user, remember=form.remember.data)
             return redirect(url_for('dashboard'))
         else:
-            flash('Login Unsuccessful. Please check email and password', 'warning')
+            flash('Login Unsuccessful. Please make sure you used the correct credentials, 'warning')
     return render_template('login.html', form=form)
 
 
@@ -58,6 +61,7 @@ def logout():
 
 @app.route('/generator', methods=['GET', 'POST'])
 @login_required
+@limiter.limit("5/minute")
 def generator():
     # Check if the user's API key is set
     if not current_user.api_key:
@@ -138,6 +142,7 @@ def generator():
 @app.route('/dashboard', methods=['GET', 'POST'])
 @app.route('/dashboard/<toggle>', methods=['GET', 'POST'])
 @login_required
+@limiter.limit("5/minute")
 def dashboard(toggle=None):
     if toggle == 'toggle_api_key_visibility':
         session['api_key_visible'] = not session.get('api_key_visible', False)
@@ -194,6 +199,7 @@ def dashboard(toggle=None):
 
 
 @app.route('/reset_request', methods=['GET', 'POST'])
+@limiter.limit("5/minute")
 def reset_request():
     form = RequestResetForm()
     message = None
@@ -218,6 +224,7 @@ If you did not make this request then simply ignore this email and no changes wi
 
 
 @app.route('/reset_request/<token>', methods=['GET', 'POST'])
+@limiter.limit("5/minute")
 def reset_token(token):
     user = User.verify_reset_token(token)
     if not user:
@@ -233,6 +240,7 @@ def reset_token(token):
 
 
 @app.route('/delete_account', methods=['POST'])
+@limiter.limit("5/minute")
 @login_required
 def delete_account():
     user = User.query.get(current_user.id)

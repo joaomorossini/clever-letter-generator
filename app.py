@@ -5,11 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
+from flask_limiter import Limiter
 # Internal dependencies
 from config import DevelopmentConfig, ProductionConfig
 
 # Instantiating Flask class
 app = Flask(__name__)
+limiter = Limiter(app, default_limits=["200 per day", "50 per hour"])  # new line
 
 # Set the configuration based on the environment
 if os.getenv('FLASK_ENV') == 'development':
