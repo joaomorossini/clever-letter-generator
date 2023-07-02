@@ -54,6 +54,10 @@ def logout():
     return redirect(url_for('login'))
 
 
+from flask import send_file
+from datetime import datetime
+import os
+
 @app.route('/generator', methods=['GET', 'POST'])
 @login_required
 def generator():
@@ -81,8 +85,12 @@ def generator():
         prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
                                         employer_name=employer_name, employer_description=employer_description,
                                         additional_instructions=additional_instructions)
-        # response = get_completion(prompt)
-        response = "teste teste teste teste teste teste teste teste teste teste "
+        try:
+            # response = get_completion(prompt)
+            response = "teste teste teste teste teste teste "
+        except Exception as e:
+            flash('Error generating cover letter: {}'.format(str(e)), 'error')
+            return redirect(url_for('dashboard'))
 
         # Save the response in the user's session
         session['response'] = response
@@ -90,7 +98,16 @@ def generator():
         # Create a log entry
         log = Log(job_title=job_title, employer_name=employer_name, user_id=current_user.id)
         db.session.add(log)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            flash('Error saving log: {}'.format(str(e)), 'error')
+            return redirect(url_for('dashboard'))
+
+        # Save the response to a txt file
+        filename = '{} - {} - {}.txt'.format(employer_name, job_title, datetime.now().strftime('%d-%b-%Y'))
+        with open(filename, 'w') as f:
+            f.write(response)
 
     elif 'clear' in request.form:
         job_title = ""
@@ -100,27 +117,13 @@ def generator():
         additional_instructions = ""
         session['response'] = ""
 
-    if 'download' in request.form:
-        # Retrieve the response from the session
-        response = session.get('response', '')
-        if response == '':
-            flash('Please generate a cover letter before downloading.', 'warning')
-            return render_template('generator.html', response=response, job_title=job_title, job_description=job_description,
-                           employer_name=employer_name, employer_description=employer_description,
-                           additional_instructions=additional_instructions)
-
-        str_io = io.StringIO()
-        str_io.write(response)
-        str_io.seek(0)
-        # Check if employer_name and job_title are not None, else replace with 'Unknown'
-        employer_name = employer_name if employer_name else 'Unknown Employer'
-        # Format the filename
-        filename = f"{employer_name} - {job_title} - {datetime.now().strftime('%Y.%m.%d')}.txt"
-        return Response(
-            str_io.getvalue(),
-            mimetype="text/plain",
-            headers={"Content-disposition":
-                         f"attachment; filename={filename}"})
+    elif 'download' in request.form:
+        filename = '{} - {} - {}.txt'.format(employer_name, job_title,datetime.now().strftime('%d-%b-%Y'))
+        if os.path.exists(filename):
+            return send_file(filename, as_attachment=True)
+        else:
+            flash('No cover letter available for download.', 'warning')
+            return redirect(url_for('dashboard'))
 
     return render_template('generator.html', response=response, job_title=job_title, job_description=job_description,
                            employer_name=employer_name, employer_description=employer_description,
