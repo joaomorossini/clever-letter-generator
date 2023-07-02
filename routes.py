@@ -1,6 +1,9 @@
 # External dependencies
 import openai
 import io
+import os
+import tempfile
+import shutil
 from datetime import datetime
 from flask import render_template, request, url_for, redirect, flash, Response, session, send_file
 from flask_login import login_user, login_required, logout_user, current_user
@@ -54,10 +57,6 @@ def logout():
     return redirect(url_for('login'))
 
 
-from flask import send_file
-from datetime import datetime
-import os
-
 @app.route('/generator', methods=['GET', 'POST'])
 @login_required
 def generator():
@@ -104,10 +103,14 @@ def generator():
             flash('Error saving log: {}'.format(str(e)), 'error')
             return redirect(url_for('dashboard'))
 
-        # Save the response to a txt file
+        # Save the response to a txt file in a temporary directory
         filename = '{} - {} - {}.txt'.format(employer_name, job_title, datetime.now().strftime('%d-%b-%Y'))
-        with open(filename, 'w') as f:
+        temp_dir = tempfile.gettempdir()
+        file_path = os.path.join(temp_dir, filename)
+        with open(file_path, 'w') as f:
             f.write(response)
+        # Save the filename in the session
+        session['filename'] = file_path
 
     elif 'clear' in request.form:
         job_title = ""
@@ -118,9 +121,12 @@ def generator():
         session['response'] = ""
 
     elif 'download' in request.form:
-        filename = '{} - {} - {}.txt'.format(employer_name, job_title,datetime.now().strftime('%d-%b-%Y'))
-        if os.path.exists(filename):
-            return send_file(filename, as_attachment=True)
+        # Get the filename from the session
+        file_path = session.get('filename')
+        if file_path and os.path.exists(file_path):
+            download_response = send_file(file_path, as_attachment=True)
+            os.remove(file_path)  # delete the file after sending it
+            return download_response
         else:
             flash('No cover letter available for download.', 'warning')
             return redirect(url_for('dashboard'))
