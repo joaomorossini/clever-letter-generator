@@ -2,7 +2,7 @@
 import openai
 import io
 from datetime import datetime
-from flask import render_template, request, url_for, redirect, flash, Response, session
+from flask import render_template, request, url_for, redirect, flash, Response, session, send_file
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_mail import Message
 # Internal dependencies
@@ -81,7 +81,8 @@ def generator():
         prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
                                         employer_name=employer_name, employer_description=employer_description,
                                         additional_instructions=additional_instructions)
-        response = get_completion(prompt)
+        # response = get_completion(prompt)
+        response = "teste teste teste teste teste teste teste teste teste teste "
 
         # Save the response in the user's session
         session['response'] = response
