@@ -3,7 +3,6 @@ import openai
 import io
 import os
 import tempfile
-import shutil
 from datetime import datetime
 from flask import render_template, request, url_for, redirect, flash, Response, session, send_file
 from flask_login import login_user, login_required, logout_user, current_user
