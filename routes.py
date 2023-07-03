@@ -48,7 +48,7 @@ def login():
             login_user(user, remember=form.remember.data)
             return redirect(url_for('dashboard'))
         else:
-            flash('Login Unsuccessful. Please make sure you used the correct credentials, 'warning')
+            flash('Login Unsuccessful. Please make sure you used the correct credentials', 'warning')
     return render_template('login.html', form=form)
 
 
