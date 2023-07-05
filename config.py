@@ -13,10 +13,10 @@ class Config(object):
     database_path = os.path.join(root_folder, 'instance', 'database.db')
 
     # Database
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{database_path}"  # Connecting app to the database
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')  # Connecting app to the database
     SECRET_KEY = os.getenv('SECRET_KEY')
     # Mail
-    MAIL_SERVER = 'smtp.googlemail.com'  # or your preferred SMTP server
+    MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.getenv('EMAIL_USER')
