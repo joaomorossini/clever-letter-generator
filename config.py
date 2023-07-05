@@ -1,10 +1,10 @@
 # External dependencies
 import os
+import re
 from dotenv import load_dotenv, find_dotenv
 
 # Setting up environment
 _ = load_dotenv(find_dotenv())  # read local .env file
-
 
 # Creating Config class
 class Config(object):
@@ -13,7 +13,11 @@ class Config(object):
     database_path = os.path.join(root_folder, 'instance', 'database.db')
 
     # Database
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')  # Connecting app to the database
+    DATABASE_URL = os.getenv('DATABASE_URL')  # Connecting app to the database
+    if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
+
     SECRET_KEY = os.getenv('SECRET_KEY')
     # Mail
     MAIL_SERVER = 'smtp.googlemail.com'
@@ -29,6 +33,7 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = False
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{Config.database_path}"
 
 
 # Production Environment
