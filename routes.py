@@ -88,8 +88,8 @@ def generator():
                                         employer_name=employer_name, employer_description=employer_description,
                                         additional_instructions=additional_instructions)
         try:
-            # response = get_completion(prompt)
-            response = "teste teste teste teste teste teste "
+            response = get_completion(prompt)
+            # response = "test test test test test test " # Alternative response for testing purposes
         except Exception as e:
             flash('Error generating cover letter: {}'.format(str(e)), 'error')
             return redirect(url_for('dashboard'))
