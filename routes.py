@@ -253,7 +253,7 @@ def delete_account():
 def get_completion(prompt, model="gpt-3.5-turbo"):
     # Check the current environment
     if app.config['DEBUG']:
-        # Use your own API key for development
+        # Use my own API key for development
         api_key = app.config['OPENAI_API_KEY_DEV']
     else:
         # Use the user's API key for production
