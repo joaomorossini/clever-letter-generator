@@ -20,7 +20,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/cleverletter/', methods=['GET', 'POST'])
 @limiter.limit("10/minute")
 def home():
     if current_user.is_authenticated:
@@ -36,7 +36,7 @@ def home():
     return render_template('signup.html', title='Register', form=form)
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/cleverletter/login', methods=['GET', 'POST'])
 @limiter.limit("10/minute")
 def login():
     if current_user.is_authenticated:
@@ -52,14 +52,14 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/logout')
+@app.route('/cleverletter/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
 
-@app.route('/generator', methods=['GET', 'POST'])
+@app.route('/cleverletter/generator', methods=['GET', 'POST'])
 @login_required
 @limiter.limit("5/minute")
 def generator():
@@ -139,8 +139,8 @@ def generator():
                            additional_instructions=additional_instructions)
 
 
-@app.route('/dashboard', methods=['GET', 'POST'])
-@app.route('/dashboard/<toggle>', methods=['GET', 'POST'])
+@app.route('/cleverletter/dashboard', methods=['GET', 'POST'])
+@app.route('/cleverletter/dashboard/<toggle>', methods=['GET', 'POST'])
 @login_required
 @limiter.limit("5/minute")
 def dashboard(toggle=None):
@@ -198,7 +198,7 @@ def dashboard(toggle=None):
     return render_template('dashboard.html', user=current_user, cv=cv, logs=logs)
 
 
-@app.route('/reset_request', methods=['GET', 'POST'])
+@app.route('/cleverletter/reset_request', methods=['GET', 'POST'])
 @limiter.limit("5/minute")
 def reset_request():
     form = RequestResetForm()
@@ -223,7 +223,7 @@ If you did not make this request then simply ignore this email and no changes wi
     mail.send(msg)
 
 
-@app.route('/reset_request/<token>', methods=['GET', 'POST'])
+@app.route('/cleverletter/reset_request/<token>', methods=['GET', 'POST'])
 @limiter.limit("5/minute")
 def reset_token(token):
     user = User.verify_reset_token(token)
@@ -239,7 +239,7 @@ def reset_token(token):
     return render_template('reset_token.html', form=form)
 
 
-@app.route('/delete_account', methods=['POST'])
+@app.route('/cleverletter/delete_account', methods=['POST'])
 @limiter.limit("5/minute")
 @login_required
 def delete_account():
