@@ -11,7 +11,7 @@ For a version in which both authentication and a user OpenAI API key are require
 ### Table of Contents
 #### 1. Contact
 #### 2. Features
-#### 3. References
+#### 3. Screenshots
 #### 4. License
 
 ---
@@ -41,6 +41,23 @@ The Clever Letter Generator is a Flask-based web application that uses AI to gen
 
 ### 3. Screenshots
 
+##### Sign Up
+![Sign Up Page](static/img/screenshot_signup.png)
+
+##### Login
+![Sign Up Page](static/img/screenshot_login.png)
+
+##### Guest Access
+![Unauthenticated Access](static/img/screenshot_generator_unauthenticated.png)
+
+#### Generated Cover Letter
+![Generated Cover Letter](static/img/screenshot_generated_cover_letter.png)
+
+##### Unauthenticated Dashboard
+![Unauthenticated Dashboard](static/img/screenshot_dashboard_unauthenticated.png)
+
+##### Authenticated Dashboard
+![Authenticated Dashboard](static/img/screenshot_authenticated_dashboard.png)
 
 ---
 
