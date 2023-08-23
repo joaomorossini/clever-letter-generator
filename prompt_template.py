@@ -22,6 +22,8 @@ Final Paragraph: Show appreciation to the reader for taking the time to review
 my application. Demonstrate in an honest tone my interest and motivation to
 further explore the ways in which I could be of value to the employer.
 
+Each paragraph should be followed by a newline (\n) and the last one should be followed by two newlines (\n\n).
+
 Finish with 'Sincerely,'
 
 CV: <{cv}> | Employer Name: <{employer_name}> | Employer description: <{employer_description}

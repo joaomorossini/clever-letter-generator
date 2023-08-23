@@ -4,7 +4,7 @@ import io
 import os
 import tempfile
 from datetime import datetime
-from flask import render_template, request, url_for, redirect, flash, Response, session, send_file
+from flask import render_template, request, url_for, redirect, flash, Response, session, send_file, Markup
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_mail import Message
 # Internal dependencies
@@ -20,7 +20,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-@app.route('/cleverletter/signup', methods=['GET', 'POST'])
+@app.route('/cleverletter/', methods=['GET', 'POST'])
 @limiter.limit("10/minute")
 def signup():
     if current_user.is_authenticated:
@@ -59,7 +59,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/cleverletter/', methods=['GET', 'POST'])
+@app.route('/cleverletter/generator', methods=['GET', 'POST'])
 @limiter.limit("5/minute")
 def generator():
     response = ""
@@ -68,6 +68,9 @@ def generator():
     employer_name = ""
     employer_description = ""
     additional_instructions = ""
+
+    if not current_user.is_authenticated:
+        flash(Markup('<a href="{}">Sign up</a> or <a href="{}">Login</a> to keep your CV and cover letter history'.format(url_for('signup'), url_for('login'))), 'warning')
 
     # Retrieve CV from session for unauthenticated users or from the database for authenticated users
     if current_user.is_authenticated and current_user.cv:
@@ -156,6 +159,7 @@ def dashboard():
     # Initialize CV with a default value
     cv = "Your CV goes here"
     logs = None
+    user_authenticated = current_user.is_authenticated
 
     if request.method == 'POST':
         # Handle CV form submission
@@ -179,7 +183,7 @@ def dashboard():
     else:
         cv = session.get('cv', cv) # Use the session value if available, otherwise use the default
 
-    return render_template('dashboard.html', user=current_user, cv=cv, logs=logs)
+    return render_template('dashboard.html', user_authenticated=user_authenticated, user=current_user, cv=cv, logs=logs)
 
 
 @app.route('/cleverletter/reset_request', methods=['GET', 'POST'])

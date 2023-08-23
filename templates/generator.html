@@ -10,10 +10,16 @@ Generator
         <div class="p-3">
             <div class="text-center">
                 <h1>Clever Letter Generator</h1>
-                <p>AI Powered Custom Cover Letters</p>
+                <h4>AI-Powered Professional Cover Letters</h4>
             </div>
-        </div>
-
+            </div>
+                <div class="text-center">
+                {% if user_authenticated %}
+                    <p>You are logged in as {{ user.email }}</p>
+                {% else %}
+                    <p>You are not logged in</p>
+                {% endif %}
+            </div>
         <br>
 
         <div class="container-fluid text-center p-2">
@@ -52,8 +58,10 @@ Generator
                 </div>
             </form>
             <div class="form-outline mx-5 mt-3 justify-content-around">
-                <h2 class="text-center">Generated Cover Letter:</h2>
-                <p>{{ response }}</p>
+                <h2>Generated Cover Letter:</h2>
+                {% for paragraph in response.split('\n') %}
+                    <p style="text-align: justify;">{{ paragraph }}</p>
+                {% endfor %}
                 <div class="text-end">
                     <form method="POST">
                         <input type="submit" name="download" value="Download" class="btn btn-primary btn-block my-4">
