@@ -62,6 +62,7 @@ def logout():
 @app.route('/cleverletter/generator', methods=['GET', 'POST'])
 @limiter.limit("5/minute")
 def generator():
+    user_authenticated = current_user.is_authenticated
     response = ""
     job_title = ""
     job_description = ""
@@ -150,7 +151,7 @@ def generator():
 
     return render_template('generator.html', response=response, job_title=job_title, job_description=job_description,
                            employer_name=employer_name, employer_description=employer_description,
-                           additional_instructions=additional_instructions, cv=cv)
+                           additional_instructions=additional_instructions, cv=cv, user_authenticated=user_authenticated, user=current_user)
 
 
 @app.route('/cleverletter/dashboard', methods=['GET', 'POST'])
