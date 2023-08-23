@@ -3,6 +3,11 @@
 
 ---
 
+NOTE: In this version, login is optional and the api calls are paid by the site owner.
+For a version in which both authentication and a user OpenAI API key are required, go to branch [login_required](https://github.com/joaomorossini/Clever-Letter-Generator/tree/login_required)
+
+---
+
 ### Table of Contents
 #### 1. Contact
 #### 2. Features
@@ -33,16 +38,8 @@ The Clever Letter Generator is a Flask-based web application that uses AI to gen
 
 ---
 
-### 3. References
-The Clever Letter Generator uses the following libraries and services:
+### 3. Screenshots
 
-- Flask: A lightweight WSGI web application framework.
-- Flask-SQLAlchemy: An extension for Flask that adds support for SQLAlchemy to your application.
-- Flask-Login: Provides user session management for Flask.
-- Flask-Bcrypt: Bcrypt hashing for Flask.
-- Flask-Mail: A simple wrapper around smtplib.
-- Flask-Limiter: Rate limiting for Flask routes.
-- OpenAI: An AI model used to generate the cover letters.
 
 ---
 
