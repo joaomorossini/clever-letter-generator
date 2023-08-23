@@ -7,58 +7,58 @@ Dashboard
 {% block content %}
     <!-- page content here -->
 
-        <div class="p-3">
-            <div class="text-center">
-                <h1>My Dashboard</h1>
-            </div>
-            <div class="text-center">
+    <div class="p-3">
+        <div class="text-center">
+            <h1>My Dashboard</h1>
+        </div>
+        <div class="text-center">
+            {% if user %}
                 <p>You are logged in as {{ user.email }}</p>
+            {% else %}
+                <p>You are not logged in.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <br>
+
+    <div class="container-fluid text-center p-2">
+        <form method="POST" action="" class="text-start">
+            <div class="form-outline mx-5">
+{#                    <label class="form-label text-start" for="api_key">OpenAI API Key* (<a class="help" href="https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/">Help</a>)</label>#}
+{#                    <div class="input-group">#}
+{#                        {% if user.api_key %}#}
+{#                            <input type="{{ 'text' if session.get('api_key_visible', False) else 'password' }}" id="api_key" name="api_key" value="{{ user.api_key }}" readonly class="form-control">#}
+{#                        {% else %}#}
+{#                            <input type="{{ 'text' if session.get('api_key_visible', False) else 'password' }}" id="api_key" name="api_key" placeholder="Please set up your OpenAI API key" class="form-control">#}
+{#                        {% endif %}#}
+{#                        <a href="{{ url_for('dashboard', toggle='toggle_api_key_visibility') }}" class="input-group-text">#}
+{#                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">#}
+{#                                <path d="M1.05 8a.9.9 0 0 1 .9-.9h12.1a.9.9 0 0 1 .9.9v0a.9.9 0 0 1-.9.9H1.95a.9.9 0 0 1-.9-.9v0zm7.9 2.6a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2zm0 1.3a3.9 3.9 0 1 0 0-7.8 3.9 3.9 0 0 0 0 7.8z"/>#}
+{#                            </svg>#}
+{#                        </a>#}
+{#                    </div>#}
             </div>
-        </div>
-
+{#                <div class="form-outline my-2 mx-5 text-end">#}
+{#                    <input type="submit" value="Update API Key" class="btn btn-primary btn-block my-4">#}
+{#                    <input type="submit" name="delete_api_key" value="Delete API Key" class="btn btn-primary btn-block my-2">#}
+{#                </div>#}
+        </form>
         <br>
+        <form method="POST" action="" class="text-start">
+            <div class="form-outline mt-4 mx-5">
+                <label class="form-label text-start" for="cv">Update your CV*</label>
+                <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000" class="form-control">{{ cv }}</textarea>
+            </div>
+            <div class="form-outline my-2 mx-5 text-end">
+                <input type="submit" value="Update CV" class="btn btn-primary btn-block my-2">
+            </div>
+        </form>
+    </div>
 
-        <div class="container-fluid text-center p-2">
-            <form method="POST" action="" class="text-start">
-                <div class="form-outline mx-5">
-                    <label class="form-label text-start" for="api_key">OpenAI API Key* (<a class="help" href="https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/">Help</a>)</label>
-                    <div class="input-group">
-                        {% if user.api_key %}
-                            <input type="{{ 'text' if session.get('api_key_visible', False) else 'password' }}" id="api_key" name="api_key" value="{{ user.api_key }}" readonly class="form-control">
-                        {% else %}
-                            <input type="{{ 'text' if session.get('api_key_visible', False) else 'password' }}" id="api_key" name="api_key" placeholder="Please set up your OpenAI API key" class="form-control">
-                        {% endif %}
-                        <a href="{{ url_for('dashboard', toggle='toggle_api_key_visibility') }}" class="input-group-text">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                <path d="M1.05 8a.9.9 0 0 1 .9-.9h12.1a.9.9 0 0 1 .9.9v0a.9.9 0 0 1-.9.9H1.95a.9.9 0 0 1-.9-.9v0zm7.9 2.6a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2zm0 1.3a3.9 3.9 0 1 0 0-7.8 3.9 3.9 0 0 0 0 7.8z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <div class="form-outline my-2 mx-5 text-end">
-                    <input type="submit" value="Update API Key" class="btn btn-primary btn-block my-4">
-                    <input type="submit" name="delete_api_key" value="Delete API Key" class="btn btn-primary btn-block my-2">
-                </div>
-            </form>
-            <br>
-            <form method="POST" action="" class="text-start">
-                <div class="form-outline mt-4 mx-5">
-                    <label class="form-label text-start" for="cv">Update your CV*</label>
-                    {% if user.cv %}
-                        <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000" class="form-control">{{ user.cv }}</textarea>
-                    {% else %}
-                        <textarea id="cv" name="cv" rows="5" cols="50" maxlength="5000" placeholder="Your CV goes here" class="form-control"></textarea>
-                    {% endif %}
-                </div>
-                <div class="form-outline my-2 mx-5 text-end">
-                    <input type="submit" value="Update CV" class="btn btn-primary btn-block my-2">
-                </div>
-            </form>
-        </div>
-
+    {% if user_authenticated %} <!-- Assuming you have a variable to check if the user is authenticated -->
         <div class="m-5 mt-2">
             <h2>History</h2>
-
             <table class="table table-striped table-hover">
                 <tr>
                     <th>Date</th>
@@ -72,44 +72,49 @@ Dashboard
                         <td>{{ log.employer_name }}</td>
                     </tr>
                 {% endfor %}
-
             </table>
 
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    {% if logs.has_prev %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ url_for('dashboard', page=logs.prev_num) }}">Previous</a>
-                        </li>
-                    {% endif %}
-                    {% for num in logs.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-                        {% if num %}
-                            {% if logs.page == num %}
-                                <li class="page-item active">
-                                    <span class="page-link">{{ num }}</span>
-                                </li>
-                            {% else %}
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ url_for('dashboard', page=num) }}">{{ num }}</a>
-                                </li>
-                            {% endif %}
-                        {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link">...</span>
+            {% if logs %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if logs.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('dashboard', page=logs.prev_num) }}">Previous</a>
                             </li>
                         {% endif %}
-                    {% endfor %}
-                    {% if logs.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ url_for('dashboard', page=logs.next_num) }}">Next</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
+                        {% for num in logs.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                            {% if num %}
+                                {% if logs.page == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('dashboard', page=num) }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if logs.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('dashboard', page=logs.next_num) }}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
 
-            <div class="my-2 text-end">
-                <form method="POST">
-                    <input type="submit" name="download_logs" value="Download Logs" class="btn btn-primary btn-block my-2">
-                </form>
-            </div>
+                <div class="my-2 text-end">
+                    <form method="POST">
+                        <input type="submit" name="download_logs" value="Download Logs" class="btn btn-primary btn-block my-2">
+                    </form>
+                </div>
+            {% endif %}
+        </div> <!-- Closing the main div -->
+    {% else %}
+        <p class="text-center">No logs available for unauthenticated users.</p>
+    {% endif %}
 {% endblock content %}

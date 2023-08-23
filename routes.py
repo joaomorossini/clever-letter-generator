@@ -20,9 +20,9 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-@app.route('/cleverletter/', methods=['GET', 'POST'])
+@app.route('/cleverletter/signup', methods=['GET', 'POST'])
 @limiter.limit("10/minute")
-def home():
+def signup():
     if current_user.is_authenticated:
         return redirect(url_for('generator'))
     form = SignupForm()
@@ -33,7 +33,7 @@ def home():
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('login'))
-    return render_template('signup.html', title='Register', form=form)
+    return render_template('signup.html', title='Sign Up', form=form)
 
 
 @app.route('/cleverletter/login', methods=['GET', 'POST'])
@@ -59,15 +59,9 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/cleverletter/generator', methods=['GET', 'POST'])
-@login_required
+@app.route('/cleverletter/', methods=['GET', 'POST'])
 @limiter.limit("5/minute")
 def generator():
-    # Check if the user's API key is set
-    if not current_user.api_key:
-        flash('Please set your API key before generating a cover letter.', 'warning')
-        return redirect(url_for('dashboard'))
-
     response = ""
     job_title = ""
     job_description = ""
@@ -75,125 +69,115 @@ def generator():
     employer_description = ""
     additional_instructions = ""
 
-    if request.method == 'POST':
+    # Retrieve CV from session for unauthenticated users or from the database for authenticated users
+    if current_user.is_authenticated and current_user.cv:
         cv = current_user.cv
+    else:
+        cv = session.get('cv', "Your CV goes here")
+
+    if request.method == 'POST':
         job_title = request.form.get('job_title')
         job_description = request.form.get('job_description')
         employer_name = request.form.get('employer_name')
         employer_description = request.form.get('employer_description')
         additional_instructions = request.form.get('additional_instructions')
+        session_cv = request.form.get('cv')  # Assuming the CV is submitted as a form field
 
-    if 'generate' in request.form:
-        prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
-                                        employer_name=employer_name, employer_description=employer_description,
-                                        additional_instructions=additional_instructions)
-        try:
-            response = get_completion(prompt)
-            # response = "test test test test test test " # Alternative response for testing purposes
-        except Exception as e:
-            flash('Error generating cover letter: {}'.format(str(e)), 'error')
-            return redirect(url_for('dashboard'))
+        # Update CV in session for unauthenticated users
+        if not current_user.is_authenticated and session_cv:
+            session['cv'] = session_cv
+            cv = session_cv
 
-        # Save the response in the user's session
-        session['response'] = response
+        if 'generate' in request.form:
+            if cv == "Your CV goes here":
+                flash('Please set your CV before generating a cover letter.', 'warning')
+                return render_template('dashboard.html', job_title=job_title, job_description=job_description,
+                                       employer_name=employer_name, employer_description=employer_description,
+                                       additional_instructions=additional_instructions)
 
-        # Create a log entry
-        log = Log(job_title=job_title, employer_name=employer_name, user_id=current_user.id)
-        db.session.add(log)
-        try:
-            db.session.commit()
-        except Exception as e:
-            flash('Error saving log: {}'.format(str(e)), 'error')
-            return redirect(url_for('dashboard'))
+            prompt = prompt_template.format(cv=cv, job_title=job_title, job_description=job_description,
+                                            employer_name=employer_name, employer_description=employer_description,
+                                            additional_instructions=additional_instructions)
+            try:
+                response = get_completion(prompt)
+            except Exception as e:
+                flash('Error generating cover letter: {}'.format(str(e)), 'error')
+                return redirect(url_for('generator'))
 
-        # Save the response to a txt file in a temporary directory
-        filename = '{} - {} - {}.txt'.format(employer_name, job_title, datetime.now().strftime('%d-%b-%Y'))
-        temp_dir = tempfile.gettempdir()
-        file_path = os.path.join(temp_dir, filename)
-        with open(file_path, 'w') as f:
-            f.write(response)
-        # Save the filename in the session
-        session['filename'] = file_path
+            # Save the response in the user's session
+            session['response'] = response
 
-    elif 'clear' in request.form:
-        job_title = ""
-        job_description = ""
-        employer_name = ""
-        employer_description = ""
-        additional_instructions = ""
-        session['response'] = ""
+            # Create a log entry only for authenticated users
+            if current_user.is_authenticated:
+                log = Log(job_title=job_title, employer_name=employer_name, user_id=current_user.id)
+                db.session.add(log)
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    flash('Error saving log: {}'.format(str(e)), 'error')
+                    return redirect(url_for('generator'))
 
-    elif 'download' in request.form:
-        # Get the filename from the session
-        file_path = session.get('filename')
-        if file_path and os.path.exists(file_path):
-            download_response = send_file(file_path, as_attachment=True)
-            os.remove(file_path)  # delete the file after sending it
-            return download_response
-        else:
-            flash('No cover letter available for download.', 'warning')
-            return redirect(url_for('dashboard'))
+            # Save the response to a txt file in a temporary directory
+            filename = '{} - {} - {}.txt'.format(employer_name, job_title, datetime.now().strftime('%d-%b-%Y'))
+            temp_dir = tempfile.gettempdir()
+            file_path = os.path.join(temp_dir, filename)
+            with open(file_path, 'w') as f:
+                f.write(response)
+            # Save the filename in the session
+            session['filename'] = file_path
+
+        elif 'clear' in request.form:
+            job_title = ""
+            job_description = ""
+            employer_name = ""
+            employer_description = ""
+            additional_instructions = ""
+            session['response'] = ""
+
+        elif 'download' in request.form:
+            # Get the filename from the session
+            file_path = session.get('filename')
+            if file_path and os.path.exists(file_path):
+                download_response = send_file(file_path, as_attachment=True)
+                os.remove(file_path)  # delete the file after sending it
+                return download_response
+            else:
+                flash('No cover letter available for download.', 'warning')
+                return redirect(url_for('generator'))
 
     return render_template('generator.html', response=response, job_title=job_title, job_description=job_description,
                            employer_name=employer_name, employer_description=employer_description,
-                           additional_instructions=additional_instructions)
+                           additional_instructions=additional_instructions, cv=cv)
 
 
 @app.route('/cleverletter/dashboard', methods=['GET', 'POST'])
-@app.route('/cleverletter/dashboard/<toggle>', methods=['GET', 'POST'])
-@login_required
 @limiter.limit("5/minute")
-def dashboard(toggle=None):
-    if toggle == 'toggle_api_key_visibility':
-        session['api_key_visible'] = not session.get('api_key_visible', False)
+def dashboard():
+    # Initialize CV with a default value
+    cv = "Your CV goes here"
+    logs = None
 
     if request.method == 'POST':
-        # Handle API key form submission
-        new_api_key = request.form.get('api_key')
-        if new_api_key and new_api_key != '******':
-            current_user.api_key = new_api_key
-            flash('API key updated successfully.', 'success')
-
         # Handle CV form submission
         new_cv = request.form.get('cv')
         if new_cv:
-            current_user.cv = new_cv
+            if current_user.is_authenticated:
+                current_user.cv = new_cv
+                db.session.commit()
+                flash('CV updated successfully.', 'success')
+            else:
+                session['cv'] = new_cv
+                flash('CV saved to session successfully.', 'success')
 
-        try:
-            db.session.commit()
-        except Exception as e:
-            # Log the error and show an error message to the user
-            print(e)
-            flash('An error occurred while updating your data. Please try again.', 'warning')
-
-    # If the user's CV is empty, show a placeholder
-    cv = current_user.cv if current_user.cv else "Your CV goes here"
-
-    # Fetch the logs from the database
-    page = request.args.get('page', 1, type=int)
-    per_page = 10
-    logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).paginate(page=page, per_page=per_page)
-    # Fetch all logs for download
-    all_logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).all()
-
-    # Downloading logs
-    if 'download_logs' in request.form:
-        # Create a string representation of the logs
-        logs_str = "\n".join(f"{log.timestamp}\t{log.job_title}\t{log.employer_name}" for log in all_logs)
-        str_io = io.StringIO()
-        str_io.write(logs_str)
-        str_io.seek(0)
-        filename = f"clever_letter_generator_log_{datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
-        return Response(
-            str_io.getvalue(),
-            mimetype="text/plain",
-            headers={"Content-disposition":
-                     f"attachment; filename={filename}"})
-
-    if 'delete_api_key' in request.form:
-        current_user.api_key = ''
-        db.session.commit()
-        flash('API key deleted successfully.', 'success')
+    # Fetch CV from the authenticated user or from the session
+    if current_user.is_authenticated:
+        cv = current_user.cv if current_user.cv else cv
+        # Fetch the logs from the database
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+        logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.timestamp.desc()).paginate(page=page, per_page=per_page)
+    else:
+        cv = session.get('cv', cv) # Use the session value if available, otherwise use the default
 
     return render_template('dashboard.html', user=current_user, cv=cv, logs=logs)
 
@@ -247,17 +231,12 @@ def delete_account():
     db.session.delete(user)
     db.session.commit()
     flash('Your account has been deleted.', 'success')
-    return redirect(url_for('home'))
+    return redirect(url_for('signup'))
 
 
 def get_completion(prompt, model="gpt-3.5-turbo"):
-    # Check the current environment
-    if app.config['DEBUG']:
-        # Use my own API key for development
-        api_key = app.config['OPENAI_API_KEY_DEV']
-    else:
-        # Use the user's API key for production
-        api_key = current_user.api_key
+    # Always use the development API key
+    api_key = app.config['OPENAI_API_KEY_DEV']
 
     # Set the API key for this request
     openai.api_key = api_key
