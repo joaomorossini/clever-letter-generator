@@ -18,10 +18,13 @@ Login
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link border" id="tab-skip" data-mdb-toggle="pill" href="{{ url_for('generator') }}" role="tab"
-                   aria-controls="pills-skip" aria-selected="false">Access as Guest</a>
+                   aria-controls="pills-skip" aria-selected="false">Guest Access</a>
             </li>
         </ul>
         <!-- Pills navs -->
+{#        <div class="text-center">#}
+{#            <a href="{{ url_for('generator') }}">Skip login and continue as guest</a>#}
+{#        </div>#}
 
         <form method="POST" action="">
             {{ form.hidden_tag() }}

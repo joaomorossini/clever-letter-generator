@@ -1,9 +1,15 @@
 # Clever Letter Generator
-### AI Powered Custom Cover Letters
+### AI-Powered Professional Cover Letters
 
 ---
 
-NOTE: In this version, login is optional and the api calls are paid by the site owner.
+### Live Demo
+https://www.morossini.me/cleverletter/
+
+---
+
+### About This Version
+In this version, login is optional and the api calls are paid by the site owner.
 For a version in which both authentication and a user OpenAI API key are required, go to branch [login_required](https://github.com/joaomorossini/Clever-Letter-Generator/tree/login_required)
 
 ---
