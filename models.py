@@ -7,6 +7,7 @@ from datetime import datetime
 from app import app, db
 
 
+# User table
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), nullable=False, unique=True)
@@ -14,6 +15,7 @@ class User(db.Model, UserMixin):
     api_key = db.Column(db.String(200))
     cv = db.Column(db.String(5000), default='')
 
+    # Function: Get reset token for password reset
     def get_reset_token(self, expires_sec=1800):
         payload = {
             'user_id': self.id,
@@ -21,6 +23,7 @@ class User(db.Model, UserMixin):
         }
         return jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
 
+    # Function: Verify reset token for password reset
     @staticmethod
     def verify_reset_token(token):
         try:
@@ -32,7 +35,7 @@ class User(db.Model, UserMixin):
             return None
         return User.query.get(user_id)
 
-
+# Log table
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
