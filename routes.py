@@ -14,6 +14,20 @@ from app import app, db, bcrypt, mail, login_manager, limiter
 from prompt_template import prompt_template
 
 
+# Security measures for the Heroku production environment
+@app.before_request
+def enforce_https():
+    if request.headers.get('X-Forwarded-Proto') == 'http' and not app.debug:
+        request_url = request.url.replace('http://', 'https://', 1)
+        return redirect(request_url, code=301)
+
+@app.after_request
+def set_hsts_header(response):
+    if request.url.startswith('https://'):
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000'  # One year
+    return response
+
+
 @login_manager.user_loader
 @limiter.limit("10/minute")
 def load_user(user_id):
