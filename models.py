@@ -3,11 +3,12 @@ import jwt
 from flask_login import UserMixin
 from time import time
 from datetime import datetime
+
 # Internal dependencies
 from app import app, db
 
 
-# User table
+# User database table
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), nullable=False, unique=True)
@@ -35,7 +36,7 @@ class User(db.Model, UserMixin):
             return None
         return User.query.get(user_id)
 
-# Log table
+# Logs database table
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
