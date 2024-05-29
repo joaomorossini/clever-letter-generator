@@ -1,3 +1,14 @@
+---
+license: mit
+title: Clever Letter Generator
+emoji: 📝
+sdk: docker
+colorFrom: green
+colorTo: gray
+pinned: true
+short_description: AI-Powered Custom Cover Letters
+---
+
 # Clever Letter Generator
 ### AI-Powered Professional Cover Letters
 
